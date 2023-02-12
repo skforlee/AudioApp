@@ -1,0 +1,11 @@
+- stop sound on click (left library)
+- favorite set
+v Make set active
+v play sound on click on button
+
+- volume control (top right)
+
+- rename set
+- delete set
+
+- sorting

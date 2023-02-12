@@ -1,0 +1,1117 @@
+/***********/
+/* GLOBALS */
+/***********/
+html, body, div, span, h1, h2, h3, h4, h5, h6, p, a, img, ul, li, form, label, canvas, header, footer, menu, nav, section, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+}
+header, footer, menu, nav, section {
+	display: block;
+}
+ol, ul {
+	list-style: none;
+}
+*, *:after, *:before {
+	box-sizing: border-box;
+}
+html, body {
+	height: 100%;
+	width: 100%;
+	font-size: 0;
+	line-height: 1;
+    overflow: hidden;
+	-webkit-overflow-scrolling: touch;
+}
+body {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+}
+input {
+    margin: 0;
+    padding: 4px;
+    background-color: inherit;
+    border: 2px solid transparent;
+    border-radius: 4px;
+    overflow: hidden;
+    font-family: "Press Start 2P", monospace;
+    font-size: 10px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+input:hover {
+    border: 2px solid black;
+    background-color: white;
+}
+input:focus {
+    background-color: white;
+}
+button {
+    appearance: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+    margin: 0;
+	padding: 0;
+    background-color: transparent;
+	border: 0;
+    border-radius: 0;
+	cursor: pointer;
+    font-family: "Press Start 2P", monospace;
+    font-size: 10px;
+	line-height: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    user-select: none;
+}
+.empty {
+    opacity: .3;
+}
+/********/
+/* TEXT */
+/********/
+h1, h2, p {
+    font-family: "Press Start 2P", monospace;
+    font-size: 10px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+h1 {
+    text-align: center;
+    user-select: none;
+}
+p {
+    white-space: normal;
+}
+a {
+    color: inherit;
+    text-decoration: none;
+}
+@media screen and (orientation: portrait) {
+	
+}
+/***********/
+/* MENUBAR */
+/***********/
+header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    height: 32px;
+    width: 100%;
+    padding: 0 12px;
+    background-color: beige;
+    border-bottom: 2px solid;
+    font-family: "Press Start 2P", monospace;
+    font-size: 10px;
+}
+#menuBar {
+    height: 100%;
+}
+#menuBarItems {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    height: 100%;
+}
+.menuBarItem {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    margin-right: 12px;
+    padding: 0 8px;
+    cursor: pointer;
+}
+.menuBarItem:hover{
+    background-color: #e1e1ba;
+}
+.menuBarItem:last-child {
+    margin-right: 0;
+}
+#volume-control-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100px;
+}
+#volume-control-container img {
+    height: 24px;
+    margin-right: 5px;
+}
+#volume-control-container input {
+    width: 100%;
+    background-color: transparent;
+}
+input[type=range] {
+    appearance: none;
+}
+input[type=range]:focus {
+    outline: none;
+}
+input[type=range]::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 3px;
+    cursor: pointer;
+    box-shadow: 0;
+    background: black;
+    border-radius: 0;
+    border: 0;
+}
+input[type=range]:focus::-webkit-slider-runnable-track {
+    background: black;
+}
+input[type=range]::-moz-range-track {
+    width: 100%;
+    height: 4px;
+    cursor: pointer;
+    box-shadow: 0;
+    background: black;
+    border-radius: 0;
+    border: 0;
+}
+input[type=range]::-webkit-slider-thumb {
+    box-shadow: 0;
+    border: 2px solid beige;
+    height: 16px;
+    width: 8px;
+    border-radius: 0;
+    background: black;
+    cursor: pointer;
+    -webkit-appearance: none;
+    margin-top: -6.5px;
+}
+input[type=range]::-moz-range-thumb {
+    box-shadow: 0;
+    border: 2px solid beige;
+    height: 12px;
+    width: 8px;
+    border-radius: 0;
+    background: black;
+    cursor: pointer;
+}
+.menuItemContent {
+    display: none;
+    flex-direction: column;
+    position: fixed;
+    top: 36px;
+    background-color: white;
+    border: 3px solid;
+    border-radius: 4px;
+    box-shadow: -4px 4px 0 black;
+    z-index: 9;
+}
+.showMenuContents {
+    display: flex;
+}
+#menuBarFileDropdown {
+    left: 16px;
+}
+#menuBarHelpDropdown {
+    left: 84px;
+}
+
+.menuBarDropdown {
+    display: flex;
+    align-items: center;
+    height: 32px;
+    padding: 4px 30px 4px 10px;
+    border-bottom: 1px dotted;
+    font-family: "Press Start 2P", monospace;
+    font-size: 10px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    cursor: pointer;
+}
+.menuBarDropdown:last-child {
+    border-bottom: 0;
+}
+.menuBarDropdown:hover {
+    background-color: #e5e5e5;
+}
+#instructionsOption {
+    padding: 0;
+}
+#instructionsOption a {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+    padding: 4px 30px 4px 10px;
+}
+#aboutInfoContainer a {
+    text-decoration: underline;
+}
+#aboutInfoContainer a:hover {
+    opacity: .7;
+}
+/**********/
+/* LAYOUT */
+/**********/
+main {
+    display: flex;
+    flex-direction: row;
+    min-height: 0;
+    height: 100%;
+    width: 100%;
+    background-color: snow;
+}
+.column {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    height: 100%;
+    min-width: 150px;
+    overflow: hidden;
+    resize: horizontal;
+}
+#col1,
+#col2 {
+    flex-shrink: 0;
+    width: 20%;
+    padding: 12px 0 16px 16px;
+    container-type: size;
+    container-name: col1_2;
+}
+#col3 {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    padding: 12px 12px 16px 16px;
+    container-type: size;
+    container-name: col3;
+}
+section {
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    border: 4px solid black;
+    border-radius: 4px;
+    box-shadow: -4px 4px 0 black;
+}
+.sectionTitle {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+    position: relative;
+    height: 36px;
+    width: 100%;
+    padding: 0 32px;
+    background-color: lightgrey;
+    border-bottom: 3px solid black;
+}
+.sectionTitle h1::before {
+    content: "";
+    display: inline-block;
+    height: 32px;
+    width: 20px;
+    margin-top: -2px;
+    margin-right: 6px;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 20px;
+    vertical-align: middle;
+}
+.showDialog {
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 100%;
+    width: 32px;
+    background-image: url(../img/help.svg);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 16px;
+}
+.showDialog:hover {
+    background-image: url(../img/help--filled.svg);
+}
+.toolbar {
+    display: flex;
+    flex-direction: row;
+    flex-shrink: 0;
+    align-items: center;
+    position: relative;
+    height: 36px;
+    width: 100%;
+    padding-left: 8px;
+    border-bottom: 3px solid;
+}
+.toolbar input {
+    flex-grow: 1;
+    padding-left: 26px;
+    background-image: url(../img/search.svg);
+    background-position: 4px center;
+    background-repeat: no-repeat;
+    background-size: 16px;
+    border: 2px solid;
+}
+.toolbar .sortButton {
+    flex-shrink: 0;
+    height: 100%;
+    width: 32px;
+    background-image: url(../img/sort.svg);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 50%;
+}
+.toolbar .sortButton:hover {
+    background-image: url(../img/sort-hover.svg);
+}
+.sortOptions {
+    display: none;
+    flex-direction: column;
+    position: absolute;
+    top: calc(100% + 4px);
+    right: 2px;
+    background-color: white;
+    border: 3px solid;
+    border-radius: 4px;
+    box-shadow: -4px 4px 0 black;
+    z-index: 9;
+}
+.sortOptions button {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    height: 32px;
+    padding: 0 42px 0 8px;
+    border-bottom: 1px dotted;
+}
+.sortOptions button:last-child {
+    border: 0;
+}
+.sortOptions button:hover {
+    background-color: #e5e5e5;
+}
+.showHideSort {
+    display: flex;
+}
+.sfxPlay {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+    height: 100%;
+    width: 32px;
+    background-image: url(../img/play--filled.svg);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 50%;
+}
+.sfxPlay:hover {
+    background-image: url(../img/play--outline.svg);
+}
+.fileFolder {
+    flex-grow: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    position: relative;
+    height: calc(100% + 4px);
+    min-width: 0;
+    background-color: white;
+    border: 2px solid;
+    border-bottom: 0;
+    border-radius: 0 4px 0px 0px;
+    user-select: none;
+}
+.fileFolder::after {
+    content: "";
+    position: absolute;
+    top: -8px;
+    left: -2px;
+    width: 40%;
+    height: 8px;
+    background-color: inherit;
+    border-radius: 4px 4px 0 0;
+    border-style: solid;
+    border-width: 2px 2px 0 2px;
+}
+.fileFolder h2 {
+    height: 32px;
+    width: 100%;
+    line-height: 32px;
+}
+.dragArea {
+    flex-shrink: 0;
+    height: 32px;
+    width: 32px;
+    background-image: url(../img/draggable.svg);
+    background-position: 8px center;
+    background-repeat: no-repeat;
+    background-size: 16px;
+    pointer-events: auto;
+}
+.dragArea:hover {
+    cursor: grab;
+}
+.dragArea:active {
+    cursor:grabbing;
+}
+.listIndex {
+    flex-shrink: 0;
+    width: 32px;
+    border-right: 1px dotted;
+    user-select: none;
+}
+.listIndex li {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 32px;
+    border-bottom: 1px dotted;
+}
+.listIndex li:last-child {
+    border-bottom: 0;
+}
+.listIndex li img {
+    width: 24px;
+}
+.contextMenu {
+    display: none;
+    position: fixed;
+    height: 32px;
+    padding: 0 8px;
+    border: 3px solid;
+    border-radius: 4px;
+    box-shadow: -4px 4px 0 black;
+}
+.contextMenu.visible {
+    display: block;
+}
+#deleteSet:hover {
+    background-color: red;
+    color: white;
+}
+
+/*****************/
+/* DIALOG MODALS */
+/*****************/
+dialog {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background-color: transparent;
+    border: 0;
+    z-index: 999;
+}
+dialog div {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    width: auto;
+    max-width: 480px;
+    padding: 32px;
+    background-color: white;
+    border: 4px solid;
+    border-radius: 4px;
+    box-shadow: -4px 4px 0 black;
+}
+dialog p {
+    margin-bottom: 10px;
+    line-height: 1.75;
+    text-align: left;
+}
+dialog p:last-child {
+    margin: 0;
+}
+dialog img {
+    height: 16px;
+}
+.closeDialogPopup {
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 32px;
+    width: 32px;
+    background-image: url(../img/close.svg);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 50%;
+}
+.closeDialogPopup:hover {
+    background-image: url(../img/close--filled.svg);
+}
+/***********/
+/* LIBRARY */
+/***********/
+#sfxLibrary {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    min-height: 0;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+}
+#sfxLibrary .sectionTitle h1::before {
+    background-image: url(../img/media--library.svg);
+
+}
+#libraryItems {
+    flex-grow: 1;
+    width: 100%;
+    background-color: gray;
+    overflow-y: auto;
+}
+.libraryItem {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    height: 32px;
+    width: 100%;
+    background-color: white;
+    border-bottom: 1px dotted;
+}
+.libraryItem:last-child {
+    border-bottom: 0;
+}
+.libraryItem:hover {
+    background-color: #e5e5e5;
+}
+.libraryItem:active {
+    cursor: grabbing;
+}
+.libraryItem input {
+    flex-grow: 1;
+    margin: 0;
+    font-family: "Press Start 2P", monospace;
+    font-size: 10px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.sfxPlay.playing {
+    background-image: url(../img/stop--filled--alt.svg)
+}
+#upload {
+    position: relative;
+    margin-left: 12px;
+    padding: 4px 8px;
+    border: 2px solid;
+    border-radius: 4px;
+}
+#upload:hover {
+    background-color: gold;
+    cursor: pointer;
+}
+#upload input[type="file"] {
+    display: block;
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    background: none;
+    border: 0;
+    opacity: 0;
+    outline: 0;
+    text-indent: -999px;
+}
+#upload input[type="file"]:hover {
+    cursor: pointer;
+}
+@container col1_2 (max-width: 240px) {
+    #upload {
+        height: 22px;
+        width: 32px;
+        background-image: url(../img/music--add.svg);
+        background-position: center 0px;
+        background-repeat: no-repeat;
+        background-size: 16px;
+    }
+    #upload h2 {
+        font-size: 0;
+    }
+}
+/**************/
+/* SAVED SETS */
+/**************/
+#savedSets {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    min-height: 0;
+    width: 100%;
+}
+#savedSets .sectionTitle h1::before {
+    background-image: url(../img/folders.svg);
+}
+#newSet {
+    position: relative;
+    margin-left: 12px;
+    padding: 4px 8px;
+    border: 2px solid;
+    border-radius: 4px;
+}
+#newSet:hover {
+    background-color: gold;
+    cursor: pointer;
+}
+.savedSetsSetList {
+    height: 100%;
+    width: 100%;
+    background-color: gray;
+    padding-top: 6px;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+.savedSetsSet {
+    height: 32px;
+}
+.savedSetsSet.shown {
+    height: calc((7 * 32px) + 2px);
+}
+.savedSetsSet .fileFolder {
+    flex-direction: column;
+    height: auto;
+}
+.savedSetsSet .fileFolder:last-child {
+    border-bottom: 1px dotted;
+}
+.savedSetsSet .fileFolder:has(.setTitle:hover) {
+    background-color: #e5e5e5;
+    transform: skewX(-4deg) translateX(0px);
+    transform-origin: 0 32px;
+}
+.savedSetsSet.shown .fileFolder:has(.setTitle:hover) {
+    background-color: #e5e5e5;
+    transform: skewX(-.5deg);
+    transform-origin: left bottom;
+}
+.setTitle {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    height: 32px;
+    width: 100%;
+}
+.setTitle h2:hover {
+    cursor: pointer;
+}
+.dropdown-icon {
+    flex-shrink: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 32px;
+    width: 32px;
+    background-image: url(../img/caret--down.svg);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 50%;
+    cursor: pointer;
+}
+.dropdown-icon:hover {
+    background-position: center 10px;
+}
+.shown .setList {
+    display: flex;
+}
+.active .setTitle {
+    background-color: mistyrose;
+}
+.active .fileFolder::after {
+    background-color: mistyrose;
+}
+.shown .dropdown-icon {
+    background-image: url(../img/caret--up.svg);
+}
+.shown .dropdown-icon:hover {
+    background-position: center 6px;
+}
+.setList {
+    display: none;
+    width: 100%;
+    background-color: white;
+    border-top: 1px dotted;
+}
+.setListSfxs {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+.setListSfxs li {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    height: 32px;
+    width: 100%;
+    padding-right: 4px;
+    border-bottom: 1px dotted;
+    user-select: none;
+}
+.setListSfxs li:last-child {
+    border-bottom: 0;
+}
+.favorited .setTitle h2 {
+    position: relative;
+    padding-left: 32px;
+}
+.favorited .setTitle h2:before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 32px;
+    height: 32px;
+    background-image: url(../img/star--filled.svg);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 50%;
+}
+@container col1_2 (max-width: 240px) {
+    #newSet {
+        height: 22px;
+        width: 32px;
+        background-image: url(../img/folder--add.svg);
+        background-position: center 0px;
+        background-repeat: no-repeat;
+        background-size: 16px;
+    }
+    #newSet h2 {
+        font-size: 0;
+    }
+}
+/*************/
+/* FAVORITES */
+/*************/
+#favorites {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    min-height: 0;
+    width: 100%;
+    margin-top: 16px;
+    overflow: hidden;
+}
+#favorites .sectionTitle h1::before {
+    background-image: url(../img/star.svg);
+}
+#favoritesList {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    background-color: gray;
+}
+#favoritesList .listIndex {
+    background-color: white;
+    z-index: 1;
+}
+#favoritesListSets {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    width: 100%;
+    background-color: gray;
+}
+#favoritesListSets li {
+    display: flex;
+    flex-direction: row;
+    position: relative;
+    height: 32px;
+    min-width: 0;
+    width: 100%;
+}
+#favoritesListSets li:last-child {
+    border-bottom: 0;
+}
+#favoritesListSets li .fileFolder {
+    padding-left: 8px;
+}
+#favoritesListSets li .fileFolder:hover {
+    cursor: grab;
+    transform: skewX(-4deg) translateX(0px);
+    transform-origin: 0 32px;
+}
+.dragBackgroundColor .fileFolder {
+    background-color: #C8EBFB;
+}
+.dragging .fileFolder {
+    background-color: #C8EBFB;
+}
+#favorites .dropdown-icon {
+    display: none;
+}
+#favorites .favorited .setTitle h2:before {
+    display: none;
+}
+#favorites .active .setTitle {
+    background-color: inherit;
+}
+#favorites .active .setTitle::after {
+    background-color: inherit;
+}
+/************/
+/* EDITOR */
+/************/
+#setEditor {
+    flex: 1;
+    min-height: 0;
+}
+#setEditor .sectionTitle {
+    padding: 0 4px;
+}
+#setEditor .sectionTitle h1::before {
+    background-image: url(../img/table--alias.svg);
+}
+#setEditor .toolbar {
+    justify-content: space-between;
+    padding: 0 8px;
+    container-type: size;
+    container-name: setEditorToolbar;
+}
+#setEditor .toolbar button {
+    padding: 4px 8px;
+    border: 2px solid black;
+    border-radius: 4px;
+}
+#setEditor .toolbar input {
+    background-color: mistyrose;
+    background-image: url(../img/edit.svg);
+    text-align: center;
+}
+#setEditor .toolbar input:hover {
+    background-image: url(../img/edit-hover.svg);
+}
+#setEditor .toolbar input:focus {
+    background-color: pink;
+}
+#duplicateSet:hover {
+    background-color: yellow;
+}
+#revert {
+    margin-right: 4px;
+}
+#revert:hover {
+    background-color: red;
+    color: white;
+}
+#save:hover {
+    background-color: lime;
+}
+.deviceContainer {
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: gray;
+    padding: 64px;
+}
+.deviceEditor {
+    position: relative;
+    height: 50cqh;
+    width: 90cqw;
+    margin-left: 8px;
+    margin-top: -8px;
+    border-radius: 4px;
+}
+.deviceEditor::after {
+    content: "";
+    position: absolute;
+    top: 20px;
+    left: -20px;
+    height: 100%;
+    width: 100%;
+    background-color: black;
+    border-radius: 4px;
+}
+.deviceRow {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    height: 50%;
+    width: 100%;
+}
+.deviceRow1 {
+    z-index: 8;
+}
+.deviceRow2 {
+    z-index: 9;
+}
+.deviceButton {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    height: 100%;
+    width: calc(100% / 3);
+    padding: 0 8px;
+    background-color: white;
+    background-position: 4px 4px;
+    background-repeat: no-repeat;
+    background-size: 24px;
+    border: 3px solid;
+    border-radius: 2px 4px 4px 2px;
+    cursor: pointer;
+}
+.deviceButton::before {
+    content: "";
+    box-sizing: content-box;
+    position: absolute;
+    top: 6px;
+    right: calc(100% + 2px);
+    height: 100%;
+    width: 16px;
+    background-color: #ccc;
+    border-top: 4.5px solid;
+    border-right: 1px solid;
+    border-bottom: 0;
+    border-left: 3px solid;
+    border-radius: 0px 2px 0px 2px;
+    transform: skewY(-45deg);
+}
+.deviceButton::after {
+    content: "";
+    box-sizing: content-box;
+    position: absolute;
+    top: calc(100% + 2px);
+    left: -12px;
+    height: 16px;
+    width: 100%;
+    background-color: #ccc;
+    border-top: 1px solid;
+    border-right: 4.5px solid;
+    border-bottom: 3px solid;
+    border-left: 0;
+    border-radius: 1px 2px 4px 2px;
+    transform: skewX(-45deg);
+}
+#setEditor .deviceButton:hover {
+    translate: -2px 2px;
+}
+#setEditor .deviceButton:hover::before {
+    top: 6px;
+    width: 15px;
+}
+#setEditor .deviceButton:hover::after {
+    height: 15px;
+    left: -11px;
+}
+#setEditor .deviceButton:active {
+    translate: -16px 16px;
+}
+#setEditor .deviceButton:active::before {
+    top: -.5px;
+    width: 1px;
+}
+#setEditor .deviceButton:active::after {
+    height: 1px;
+    left: -3px;
+}
+.buttonInfo {
+    display: flex;
+    align-items: center;
+    position: relative;
+    height: 32px;
+    min-width: 0;
+    padding-left: 8px;
+    background-color: white;
+    border: 2px solid;
+    border-radius: 4px;
+    user-select: none;
+}
+.buttonInfo:hover {
+    cursor: grab;
+}
+.buttonInfo:active {
+    cursor: grabbing;
+}
+.deleteSfx {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    height: 32px;
+    width: 32px;
+    background-image: url(../img/trash-can.svg);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 50%;
+}
+.deleteSfx:hover {
+    background-image: url(../img/trash-can-hover.svg);
+}
+#button1 {
+    background-image: url(../img/number--small--1.svg);
+    z-index: 9;
+}
+#button2 {
+    background-image: url(../img/number--small--2.svg);
+    z-index: 8;
+}
+#button3 {
+    background-image: url(../img/number--small--3.svg);
+    z-index: 7;
+}
+#button4 {
+    background-image: url(../img/number--small--4.svg);
+    z-index: 9;
+}
+#button5 {
+    background-image: url(../img/number--small--5.svg);
+    z-index: 8;
+}
+#button6 {
+    background-image: url(../img/number--small--6.svg);
+    z-index: 7;
+}
+@container col3 (max-width: 420px) {
+    #deleteSet {
+        height: 22px;
+        width: 32px;
+        background-image: url(../img/trash-can.svg);
+        background-position: center 0px;
+        background-repeat: no-repeat;
+        background-size: 16px;
+    }
+    #deleteSet h2 {
+        font-size: 0;
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+.dropping-on-this {
+    border: solid red 3px !important;
+}

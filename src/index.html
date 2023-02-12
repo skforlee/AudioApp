@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link href="css/styles.css" rel="stylesheet" type="text/css">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+        <script defer src="js-lib/sortable.js"></script>
+        <script defer src="js-lib/custom-dragging-events.js"></script>
+        <script defer src="js-lib/utils.js"></script>
+
+        <script defer src="js/app-specific-utils.js"></script>
+        <script defer src="js/drag-and-drop-sorting.js"></script>
+        <script defer src="js/dom-creation-functions.js"></script>
+        <script defer src="js/inline-event-listeners.js"></script>
+        <script defer src="js/scripts.js"></script>
+    </head>
+    <body>
+        <!--++++++-->
+        <!-- menu -->
+        <!--++++++-->
+        <header>
+            <!-- menu items -->
+            <nav id="menuBar">
+                <ul id="menuBarItems">
+                    <!-- file -->
+                    <li id="file" class="menuBarItem">
+                        <h2>File</h2>
+                        <ul id="menuBarFileDropdown" class="menuItemContent">
+                            <li id="uploadSfxOption" class="menuBarDropdown"><h2>Upload SFX</h2></li>
+                            <li id="createSetOption" class="menuBarDropdown"><h2>New Set</h2></li>
+                            <li id="exitOption" class="menuBarDropdown"><h2>Exit</h2></li>
+                        </ul>
+                    </li>
+                    <!-- help -->
+                    <li id="help" class="menuBarItem">
+                        <h2>Help</h2>
+                        <ul id="menuBarHelpDropdown" class="menuItemContent">
+                            <li id="instructionsOption" class="menuBarDropdown"><a href="https://sfx-6.com/instructions/" target="_blank">How to use</a></li>
+                            <li id="aboutOption" class="menuBarDropdown" onclick="document.getElementById('aboutInfoContainer').style.display = 'flex';">About</li>
+                        </ul>
+                    </li>
+                </ul>
+            </nav>
+
+            <!-- title -->
+            <div id="softwareTitle"><h1>SFX-6 Button Assignment Tool</h1></div>
+
+            <!-- volume control -->
+            <div id="volume-control-container">
+                <img src="img/volume.svg">
+                <input id="volume-control" type="range">
+            </div>
+        </header>
+        <!--++++++-->
+        <!-- main -->
+        <!--++++++-->
+        <main>
+            <!-- column 1 -->
+            <div id="col1" class="column">
+                <!--library-->
+                <section id="sfxLibrary">
+                    <div class="sectionTitle">
+                        <button class="showDialog" title="Help" onclick="document.getElementById('libraryInstructions').style.display='flex';"></button>
+                        <h1>Library (<span id="">24</span>)</h1>
+                    </div>
+                    <div class="toolbar">
+                        <input id="searchSFX" type="text" placeholder="Search">
+                        <div id="upload" title="Upload SFX">
+                            <input type="file" accept=".wav,.mp3" multiple onchange="onUploadSFXInputChange(event)">
+                            <h2>Upload</h2>
+                        </div>
+                        <button id="sort-sfx" class="sortButton" title="Sort" onclick="showHideSortLib()"></button>
+                        <div class="sortOptions">
+                            <button class="sortByNewest"><h2>Newest</h2></button>
+                            <button class="sortByOldest"><h2>Oldest</h2></button>
+                            <button class="sortAtoZ" onclick="sortAtoZ()"><h2>A-Z</h2></button>
+                            <button class="sortZtoA" onclick="sortZtoA()"><h2>Z-A</h2></button>
+                        </div>
+                    </div>
+                    <ul id="libraryItems">
+                        <!-- <li id="" class="libraryItem">
+                            <button class="sfxPlay"></button>
+                            <input type="text" value="Owl screech">
+                            <div class="dragArea"></div>
+                        </li> -->
+                    </ul>
+
+                    <div id="contextMenu" class="context-menu" style="display: none">
+                        <ul class="menu">
+                            <li class="share"><a href="#"><i class="fa fa-share" aria-hidden="true"></i> Share</a></li>
+                            <li class="rename"><a href="#"><i class="fa fa-pencil" aria-hidden="true"></i> Rename</a></li>
+                            <li class="link"><a href="#"><i class="fa fa-link" aria-hidden="true"></i> Copy Link Address</a></li>
+                            <li class="copy"><a href="#"><i class="fa fa-copy" aria-hidden="true"></i> Copy to</a></li>
+                            <li class="paste"><a href="#"><i class="fa fa-paste" aria-hidden="true"></i> Move to</a></li>
+                            <li class="download"><a href="#"><i class="fa fa-download" aria-hidden="true"></i> Download</a></li>
+                            <li class="trash"><a href="#"><i class="fa fa-trash" aria-hidden="true"></i> Delete</a></li>
+                        </ul> 
+                    </div> 
+                </section>
+            </div>
+
+            <!-- column 2 -->
+            <div id="col2" class="column">
+                <!-- sets -->
+                <section id="savedSets">
+                    <!-- sets title -->
+                    <div class="sectionTitle">
+                        <button id="" class="showDialog" title="Help" onclick="document.getElementById('setsInstructions').style.display='flex';"></button>
+                        <h1>Saved Sets (<span id="">6</span>)</h1>
+                    </div>
+                    <!-- sets toolbar -->
+                    <div class="toolbar">
+                        <label for="search-sets"></label>
+                        <input id="search-sets" class="search" type="text" placeholder="Search">
+                        <button id="newSet" title="New set" onclick="onNewSetClick(event)"><h2>New set</h2></button>
+                        <button id="sort-sets" class="sortButton" title="Sort" onclick="showHideSortSets()"></button>
+                        <div class="sortOptions">
+                            <button class="sortByNewest"><h2>Newest</h2></button>
+                            <button class="sortByOldest"><h2>Oldest</h2></button>
+                            <button class="sortAtoZ" onclick="sortAtoZ()"><h2>A-Z</h2></button>
+                            <button class="sortZtoA" onclick="sortZtoA()"><h2>Z-A</h2></button>
+                        </div>
+                    </div>
+                    <!-- sets list -->
+                    <ul id="setsList" class="savedSetsSetList">
+                        <!-- Populated via JS; see js/dom-creation-functions.js -->
+                    </ul>
+                </section>
+
+                <!-- favorites -->
+                <section id="favorites">
+                    <!--favorites titlebar-->
+                    <div class="sectionTitle">
+                        <button id="" class="showDialog" title="Help" onclick="document.getElementById('favoritesInstructions').style.display='flex';"></button>
+                        <h1>Favorites</h1>
+                    </div>
+                    <!--favorites list-->
+                    <div id="favoritesList">
+                        <ul class="listIndex">
+                            <li><img src="img/number--small--1.svg"></li>
+                            <li><img src="img/number--small--2.svg"></li>
+                            <li><img src="img/number--small--3.svg"></li>
+                            <li><img src="img/number--small--4.svg"></li>
+                            <li><img src="img/number--small--5.svg"></li>
+                            <li><img src="img/number--small--6.svg"></li>
+                        </ul>
+                        <ul id="favoritesListSets">
+                            <!-- Populated via JS; see js/dom-creation-functions.js -->
+                        </ul>
+                    </div>
+                </section>
+            </div>
+
+            <!-- column 3 -->
+            <div id="col3">
+                <!-- editor -->
+                <section id="setEditor">
+                    <div class="sectionTitle"> <!-- title -->
+                        <button id="" class="showDialog" title="Help" onclick="document.getElementById('editorInstructions').style.display='flex';"></button>
+                        <h1>Set Editor</h1>
+                    </div>
+                    <div class="toolbar"> <!-- toolbar -->
+                        <input id="" type="text" value="Example set 3" onclick="this.select()">
+                    </div>
+                    <div id="" class="deviceContainer">
+                        <div id="" class="deviceEditor">
+                            <div class="deviceRow deviceRow1">
+                                <div id="button1" class="deviceButton" onclick="onBigButtonClick(event)">
+                                    <div class="buttonInfo" draggable="true">
+                                        <h2>Wolf howl</h2>
+                                        <div class="dragArea"></div>
+                                    </div>
+                                    <!--
+                                    <button class="deleteSfx"></button>
+                                    -->
+                                </div>
+                                <div id="button2" class="deviceButton" onclick="onBigButtonClick(event)">
+                                    <div class="buttonInfo" draggable="true">
+                                        <h2>Dog bark</h2>
+                                        <div class="dragArea"></div>
+                                    </div>
+                                </div>
+                                <div id="button3" class="deviceButton" onclick="onBigButtonClick(event)">
+                                    <div class="buttonInfo" draggable="true">
+                                        <h2>Cat meow</h2>
+                                        <div class="dragArea"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="deviceRow deviceRow2">
+                                <div id="button4" class="deviceButton" onclick="onBigButtonClick(event)">
+                                    <div class="buttonInfo" draggable="true">
+                                        <h2>Cow moo</h2>
+                                        <div class="dragArea"></div>
+                                    </div>
+                                </div>
+                                <div id="button5" class="deviceButton" onclick="onBigButtonClick(event)">
+                                    <div class="buttonInfo" draggable="true">
+                                        <h2>Cricket chirp</h2>
+                                        <div class="dragArea"></div>
+                                    </div>
+                                </div>
+                                <div id="button6" class="deviceButton" onclick="onBigButtonClick(event)">
+                                    <div class="buttonInfo" draggable="true">
+                                        <h2>Owl screech</h2>
+                                        <div class="dragArea"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+        <!--+++++++++++++-->
+        <!-- context menu -->
+        <!--+++++++++++++-->
+        <button id="deleteSet" class="contextMenu"><h2>Delete set</h2></button>
+        <!--++++++++-->
+        <!-- modals -->
+        <!--++++++++-->
+        <dialog id="aboutInfoContainer"><!-- about -->
+            <div>
+                <button class="closeDialogPopup" onclick="this.parentElement.parentElement.style.display='none';"></button>
+                <p>SFX-6 Button Assignment Tool</p>
+                <p>A Practical Nonsense LLC Product</p>
+                <p>Version 1.0</p>
+                <p><a href="https://sfx-6.com/" target="_blank">www.sfx-6.com</a></p>
+            </div>
+        </dialog>
+        <dialog id="libraryInstructions"><!-- library help -->
+            <div>
+                <button class="closeDialogPopup" onclick="this.parentElement.parentElement.style.display='none';"></button>
+                <p>
+                    To add new SFXs, click the "Upload" (<img src="img/music--add.svg" alt="&uarr;">) button.
+                    <br><br>
+                    To delete SFXs, right click on the SFX and then click "Delete".
+                </p>
+            </div>
+        </dialog>
+        <dialog id="setsInstructions"><!-- sets help -->
+            <div>
+                <button class="closeDialogPopup" onclick="this.parentElement.parentElement.style.display='none';"></button>
+                <p>
+                    Sets are groups of up to 6 SFX.
+                    <br><br>
+                    To create a set, click the "New Set" (<img src="img/folder--add.svg">) button.
+                    <br><br>
+                    To edit a set, click on the set name; it will appear in the "Set Editor".
+                    <br><br>
+                    To delete a set, right click on the set and then click "Delete".
+                    <br><br>
+                    Starred sets (<img src="img/star--filled.svg">) are part of your "Favorites".
+                </p>
+            </div>
+        </dialog>
+        <dialog id="favoritesInstructions"><!-- favorites help -->
+            <div>
+                <button class="closeDialogPopup" onclick="this.parentElement.parentElement.style.display='none';"></button>
+                <p>
+                    Add up to 6 sets to your "Favorites" list by dragging them from "Saved Sets" into this list.
+                    <br><br>
+                    Each set in your "Favorites" list corresponds to a button on your SFX-6. To activate a set, long press on the respective button for 2 seconds.
+                    <br><br>
+                    Rearrange your favorites by dragging them to their desired positions. Remove sets by dragging them out of the list.
+                </p>
+            </div>
+        </dialog>
+        <dialog id="editorInstructions"><!-- editor help -->
+            <div>
+                <button class="closeDialogPopup" onclick="this.parentElement.parentElement.style.display='none';"></button>
+                <p>
+                    Assign an SFX to a button by dragging it from your "Library" and dropping it into the desired button below.
+                    <br><br>
+                    To remove an SFX, drag it off the button.
+                </p>
+            </div>
+        </dialog>
+    </body>
+</html>
