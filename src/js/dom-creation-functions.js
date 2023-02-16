@@ -1,5 +1,4 @@
-
-function createLibraryItem({ name }) {
+function createLibraryItemDom({ name }) {
     const element = dom(`
         <li draggable="true" class="libraryItem">
             <button class="sfxPlay"></button>
@@ -8,26 +7,64 @@ function createLibraryItem({ name }) {
         </li>
     `, {
         '.sfxPlay': function(element) {
-            const soundName = element.querySelector('input').value
-            NodeCB.playAudioFromLibrary(soundName)
+            const audioName = element.querySelector('input').value
+            const button = element.querySelector('button')
+
+            onClickOnPlayButtonForAudio(button, audioName)
         }
     })
 
-    onElementDraggedToAllQuery(element, '.deviceButton', (buttonDiv) => {
+    element.querySelector('input').addEventListener('focus', (evt) => {
+        element.setAttribute('data-old-input-value', element.querySelector('input').value)
+    })
+    element.querySelector('input').addEventListener('change', (evt) => {
+        // Rename the file in the library
+        const oldName = element.getAttribute('data-old-input-value')
+        const newName = evt.target.value
+        NodeCB.renameLibraryAudioFile(oldName, newName)
+
+        // Rename the file in saved sets
+        for (const savedSetData of NodeCB.getAllSavedSetsWithAudiosData()) {
+            if (savedSetData.audioNames.includes(oldName) != -1) {
+                const audioIndex = savedSetData.audioNames.indexOf(oldName)
+                NodeCB.retargetAudioShortcutInSetFolder(savedSetData.setName, audioIndex, newName)
+            }
+        }
+
+        // Rename the audio in sets in DOM
+        for (const h2 of queryAll('.setListSfxs li h2')) {
+            if (h2.innerText == oldName)
+                h2.innerText = newName
+        }
+
+        // Rename in buttons
+        makeSetActive(getCurrentlyActiveSetName())
+    })
+
+    onElementDraggedToQueryAll(element, '.deviceButton', (buttonDiv) => {
         const audioName = element.querySelector('input').value
         buttonDiv.querySelector('h2').innerText = audioName
+        updateSavedSetItemsInDomAndFiles(getCurrentlyActiveSetName(), getButtonsAudioNamesNullIfEmpty())
     })
-    onElementDraggedToAllQuery(element, '.savedSetsSet', (savedSetLi) => {
+    onElementDraggedToQueryAll(element, '.savedSetsSet', (savedSetLi) => {
         const audioName = element.querySelector('input').value
         const savedSetName = savedSetLi.querySelector('.setTitle h2').innerText
         tryAddSoundFromLibraryToSet(audioName, savedSetName)
+        makeSetActive(getCurrentlyActiveSetName())
+    }, {
+        onDragStart: () => {
+            showFullSetIndicators()
+        },
+        onDragEnd: () => {
+            hideFullSetIndicators()
+        }
     })
 
     document.querySelector('#libraryItems').appendChild(element)
     return element
 }
-function createSavedSet({ name, items, isFavorited, isActive }) {
-    if (name == null) throw `You must provide a name to createSavedSet`
+function createSavedSetDom({ name, items, isFavorited, isActive }) {
+    if (name == null) throw `You must provide a name to createSavedSetDom`
 
     let elementExtraClasses = ""
     if (isFavorited === true) elementExtraClasses += " favorited"
@@ -36,6 +73,7 @@ function createSavedSet({ name, items, isFavorited, isActive }) {
     if (items == null) {
         items = repeatToArray('[Empty]', 6)
     }
+    items = items.map(item => item == null? '[Empty]': item)
 
     const element = dom(`
         <li draggable="true" class="savedSetsSet ${elementExtraClasses}">
@@ -75,6 +113,12 @@ function createSavedSet({ name, items, isFavorited, isActive }) {
     `, {
         '.dropdown-icon': function(elem) {  // On click on the ".dropdown-icon", toggle "shown" class
             elem.classList.toggle("shown")
+        },
+        '.setListSfxs li button': function(elem, button) {
+            const audioName = button.parentNode.querySelector('h2').innerText
+            if (audioName == '[Empty]')
+                return
+            onClickOnPlayButtonForAudio(button, audioName)
         }
     })
     element.addEventListener('click', (evt) => {
@@ -82,17 +126,24 @@ function createSavedSet({ name, items, isFavorited, isActive }) {
         makeSetActive(setName)
     })
 
-    markAsCustomDragDropReceiver(element) // Responds to 'drop' events
+     // Responds to 'drop' events (dragging/dropping library items)
+    markAsCustomDragDropReceiver(element)
 
-    onElementDraggedToAllQuery(element, '#favoritesListSets', () => {
+    // Drag events
+    onElementDraggedToQueryAll(element, '#favoritesListSets', () => {
         const setName = element.querySelector('.setTitle h2').innerText
         tryMakeSetFavorite(setName)
+    }, {
+        onDragStart: () => {
+            tryShowFullFavoritesIndicator()
+        },
+        onDragEnd: () => {
+            tryHideFullFavoritesIndicator()
+        }
     })
     
 
     document.querySelector('#setsList').appendChild(element)
-
-    NodeCB.createSavedSetFolder(name)
 
     return element
 }
@@ -112,7 +163,27 @@ function createFavoriteSetItem({ name, isEmpty }) {
             </div>
         </li>
     `)
+
+    element.addEventListener('click', (evt) => {
+        const setName = element.querySelector('h2').innerText
+        makeSetActive(setName)
+    })
+
     document.querySelector('#favoritesListSets').appendChild(element)
     return element
 }
 
+
+
+// Utils
+function onClickOnPlayButtonForAudio(button, audioName) {
+    if (button.classList.contains('sfxPlay--pause') == false) {
+        button.classList.add('sfxPlay--pause')
+        playAudioFromLibrary(audioName, () => {
+            button.classList.remove('sfxPlay--pause')
+        })
+    } else {
+        stopAudio(audioName)
+        button.classList.remove('sfxPlay--pause')
+    }
+}

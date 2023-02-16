@@ -417,6 +417,12 @@ section {
 .sfxPlay:hover {
     background-image: url(../img/play--outline.svg);
 }
+.sfxPlay--pause {
+    background-image: url(../img/pause--filled.svg);
+}
+.sfxPlay--pause:hover {
+    background-image: url(../img/pause--outline.svg);
+}
 .fileFolder {
     flex-grow: 1;
     display: flex;
@@ -826,6 +832,7 @@ dialog img {
     flex-direction: row;
     width: 100%;
     background-color: gray;
+    position: relative;
 }
 #favoritesList .listIndex {
     background-color: white;
@@ -1110,8 +1117,61 @@ dialog img {
 
 
 
-
-
+/* Extra added styling */
+#notAllowedCursorImg {
+    position: absolute;
+    z-index: 999999999;
+}
 .dropping-on-this {
     border: solid red 3px !important;
+}
+.cursor-not-allowed {
+    cursor: not-allowed;
+}
+.hidden {
+    display: none;
+}
+.set-h2-full {
+    position: relative;
+    color: gray;
+    padding-left: 32px;
+}
+.set-h2-full::before {
+    content: '';
+    background-image: url('../img/not-allowed-set.svg') !important;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 50%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 32px;
+    height: 32px;
+}
+
+#favoritesNotAllowedOverlay {
+    position: absolute;
+    z-index: 999999;
+
+    background-color: white;
+    width: 100%;
+    height: 100%;
+    
+    opacity: 0.9;
+    color: black;
+    text-align: center;
+}
+#favoritesNotAllowedOverlay h1 {
+    display: block;
+    
+    margin: auto;
+    vertical-align: middle;
+    width: 70%;
+
+    margin-top: 65px;
+    line-height: 20px;
+
+    word-wrap: normal;
+    overflow-wrap: normal;
+    white-space: normal;
 }

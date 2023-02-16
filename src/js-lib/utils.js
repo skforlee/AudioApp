@@ -126,6 +126,11 @@ function repeatToArray(repeatWhat, nTimes) {
     }
     return arr
 }
+function fillArrayUntilLength(array, withWhat, maxLength) {
+    while (array.length < maxLength) {
+        array.push(withWhat)
+    }
+}
 
 
 
@@ -227,9 +232,13 @@ const dom = function (str, clickListeners={}) {
     for (const listenerName of Object.keys(clickListeners)) {
         for (const elem of Array.from(firstDiv.querySelectorAll(listenerName))) {
             elem.addEventListener('click', () => {
-                clickListeners[listenerName](firstDiv)
+                clickListeners[listenerName](firstDiv, elem)
             })
         }
     }
 	return firstDiv
+}
+function isPointInsideDiv(x, y, div) {
+    const rect = div.getBoundingClientRect()
+    return (x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom)
 }

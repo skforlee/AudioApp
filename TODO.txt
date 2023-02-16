@@ -1,11 +1,42 @@
-- stop sound on click (left library)
-- favorite set
-v Make set active
-v play sound on click on button
 
-- volume control (top right)
+v All sounds and sets are loaded on startup
+v Volume control from the slider top-right works (works live, while audios are playing too)
 
-- rename set
+v Rename library sound (and changes the file too, saved sets and buttons too)
+v Library search works
+
+v Add library sound to button
+    v Changes the currently active set to reflect this
+v Add library sound to saved set
+    v The saved folder structure and buttons change to match it
+    v Full sets have an indicator to show they're full
+    - There's a visual bug with the 'empty' class when you do this
+
+v Favorite set: drag and drop a set to Favorites
+    v You can't add more than 6 favorite sets; there's an indicator on the favorites panel that show that
+v On click on favorite, it makes it active
+
+v Play sound on click on large button
+v Play sound on click on button (both for Library and Saved Sets)
+    v Stop audio works, and buttons are responsive
+
+v Make set active on click (and update buttons and name)
+v Rename set (renames folder and favorite shortcut)
+
+
+
+
+
+
+- make some animations for drag/drop
+    - Create elements on drag-over, and remove them on drag-leave
+    - For all to be nice, we can mark them as .isTemporary and remove them later through multiple calls, just in case it can bug out
+
 - delete set
 
+- delete sounds from library
+    - deletes from saved set UI too
+
 - sorting
+
+- when playing a sound, if you rename it and stop it, it doesn't work

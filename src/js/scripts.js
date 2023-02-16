@@ -1,36 +1,64 @@
 
+function loadLibraryAudios() {
+    removeAllChildren(query('#libraryItems'))
+    const allAudioNames = NodeCB.getAllLibraryAudioNames()
+    for (const audioName of allAudioNames) {
+        createLibraryItemDom({ name: audioName })
+    }
+}
+function loadSavedSets() {
+    removeAllChildren(query('#setsList'))
+    const allSavedSetsData = NodeCB.getAllSavedSetsWithAudiosData()
+    for (const setData of allSavedSetsData) {
+        createSavedSetDom({
+            name: setData.setName,
+            items: setData.audioNames,
+            isFavorited: NodeCB.isSetFavorite(setData.setName)
+        })
+    }
+}
+function loadFavoriteSets() {
+    removeAllChildren(query('#favoritesListSets'))
+    const allFavoriteSetNames = NodeCB.getAllFavoriteSetNames()
+    fillArrayUntilLength(allFavoriteSetNames, null, 6)
+    for (const setName of allFavoriteSetNames) {
+        if (setName != null) {
+            createFavoriteSetItem({ name: setName, isEmpty: false })
+        } else {
+            createFavoriteSetItem({ isEmpty: true })
+        }
+    }
+}
+
+
+
 function setupButtonSwapping() {
     const the6Buttons = Array.from(document.querySelectorAll('.buttonInfo'))
     the6Buttons.forEach(smallButton => {
-        onElementDraggedToAllQuery(smallButton, '.deviceButton', (deviceButton) => {
+        onElementDraggedToQueryAll(smallButton, '.deviceButton', (deviceButton) => {
             const thisName = smallButton.querySelector('h2').innerText
             const thatName = deviceButton.querySelector('h2').innerText
             deviceButton.querySelector('h2').innerText = thisName
             smallButton.querySelector('h2').innerText = thatName
+            console.log(getButtonsAudioNamesNullIfEmpty())
+            updateSavedSetItemsInDomAndFiles(getCurrentlyActiveSetName(), getButtonsAudioNamesNullIfEmpty())
         })
     })
 }
 
 
 document.addEventListener('DOMContentLoaded', () => {
-    createLibraryItem({ name: 'SFX-1' })
-    createLibraryItem({ name: 'SFX-2' })
-    createLibraryItem({ name: 'SFX-3' })
-    createLibraryItem({ name: 'SFX-4' })
-
-    createSavedSet({ name: "Audio Set 1", items: ["[Empty]", "[Empty]", "[Empty]", "[Empty]", "[Empty]", "[Empty]"] })
-    createSavedSet({ name: "Audio Set 2", isActive: true, isFavorited: true, items: ["[Empty]", "[Empty]", "[Empty]", "[Empty]", "[Empty]", "[Empty]"] })
-    createSavedSet({ name: "Audio Set 7", isFavorited: true, items: ["[Empty]", "[Empty]", "[Empty]", "[Empty]", "[Empty]", "[Empty]"] })
-    createSavedSet({ name: "Audio Set 4", items: ["[Empty]", "[Empty]", "[Empty]", "[Empty]", "[Empty]", "[Empty]"] })
-
-    createFavoriteSetItem({ name: 'Audio Set 1' })
-    createFavoriteSetItem({ isEmpty: true })
-    createFavoriteSetItem({ isEmpty: true })
-    createFavoriteSetItem({ name: 'Audio Set 4' })
-    createFavoriteSetItem({ isEmpty: true })
-    createFavoriteSetItem({ isEmpty: true })
+    loadLibraryAudios()
+    loadSavedSets()
+    loadFavoriteSets()
 
     setupButtonSwapping()
+
+    if (getAnySetName() == null) {
+        onNewSetClick()
+    }
+
+    makeSetActive(getAnySetName())
 })
 
 

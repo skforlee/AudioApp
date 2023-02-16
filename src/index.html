@@ -6,8 +6,13 @@
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 
+        <script
+            src="https://code.jquery.com/jquery-3.6.3.js"
+            integrity="sha256-nQLuAZGRRcILA+6dMBOvcRh5Pe310sBpanc6+QBmyVM="
+            crossorigin="anonymous"></script>
         <script defer src="js-lib/sortable.js"></script>
         <script defer src="js-lib/custom-dragging-events.js"></script>
+        <script defer src="js-lib/audio-control.js"></script>
         <script defer src="js-lib/utils.js"></script>
 
         <script defer src="js/app-specific-utils.js"></script>
@@ -50,7 +55,7 @@
             <!-- volume control -->
             <div id="volume-control-container">
                 <img src="img/volume.svg">
-                <input id="volume-control" type="range">
+                <input id="volume-control" type="range" min="0" max="1" step="0.01" value="1" onchange="changeVolume(event.target.value)" oninput="changeVolume(event.target.value)">
             </div>
         </header>
         <!--++++++-->
@@ -66,7 +71,7 @@
                         <h1>Library (<span id="">24</span>)</h1>
                     </div>
                     <div class="toolbar">
-                        <input id="searchSFX" type="text" placeholder="Search">
+                        <input id="searchSFX" type="text" placeholder="Search" oninput="onSearchChange(this.value)">
                         <div id="upload" title="Upload SFX">
                             <input type="file" accept=".wav,.mp3" multiple onchange="onUploadSFXInputChange(event)">
                             <h2>Upload</h2>
@@ -80,11 +85,7 @@
                         </div>
                     </div>
                     <ul id="libraryItems">
-                        <!-- <li id="" class="libraryItem">
-                            <button class="sfxPlay"></button>
-                            <input type="text" value="Owl screech">
-                            <div class="dragArea"></div>
-                        </li> -->
+                        <!-- Populated with JS -->
                     </ul>
 
                     <div id="contextMenu" class="context-menu" style="display: none">
@@ -138,6 +139,9 @@
                     </div>
                     <!--favorites list-->
                     <div id="favoritesList">
+                        <div id="favoritesNotAllowedOverlay" style="display: none">
+                            <h1>Only 6 favorite sets are allowed</h1>
+                        </div>
                         <ul class="listIndex">
                             <li><img src="img/number--small--1.svg"></li>
                             <li><img src="img/number--small--2.svg"></li>
@@ -162,7 +166,7 @@
                         <h1>Set Editor</h1>
                     </div>
                     <div class="toolbar"> <!-- toolbar -->
-                        <input id="" type="text" value="Example set 3" onclick="this.select()">
+                        <input id="setNameInput" type="text" value="Example set 3" onclick="this.select()" onchange="renameSet(event.target.value)">
                     </div>
                     <div id="" class="deviceContainer">
                         <div id="" class="deviceEditor">
@@ -221,6 +225,7 @@
         <!--++++++++-->
         <!-- modals -->
         <!--++++++++-->
+        <img id="notAllowedCursorImg" src="img/not-allowed.svg" style="display: none">
         <dialog id="aboutInfoContainer"><!-- about -->
             <div>
                 <button class="closeDialogPopup" onclick="this.parentElement.parentElement.style.display='none';"></button>
