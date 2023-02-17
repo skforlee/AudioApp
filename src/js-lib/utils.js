@@ -223,7 +223,6 @@ function query(q) {
 }
 function removeAllChildren(node){
     while (node.firstChild) {
-        console.log("Removing " + node.firstChild);
         node.removeChild(node.firstChild);}
 }
 const dom = function (str, clickListeners={}) {
@@ -241,4 +240,11 @@ const dom = function (str, clickListeners={}) {
 function isPointInsideDiv(x, y, div) {
     const rect = div.getBoundingClientRect()
     return (x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom)
+}
+function sortChildren(div, sortFunc) {
+    const divChildren = Array.from(div.children)
+    divChildren.sort(sortFunc)
+    for (const child of divChildren) {
+        div.appendChild(child)
+    }
 }

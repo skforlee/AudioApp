@@ -22,7 +22,6 @@ const FAVORITES_FOLDER_PATH = 'favorites'
 // Library Audio
 function saveAudioFile({ file, folder, callback }) {    // callback(true) if succeeded, otherwise callback(false)
     // assertNotNull(file, folder)    
-    console.log(`Saving file named ${file.name} to folder ${folder}`)
     const filePath = join(folder, file.name)
     const fileReader = new FileReader()
     fileReader.readAsArrayBuffer(file)
@@ -62,6 +61,9 @@ function renameLibraryAudioFile(oldName, newName) {
     const newAudioPath = join(LIBRARY_FOLDER_PATH, newName)
     fs.renameSync(audioPath, newAudioPath)
 }
+function deleteLibraryAudioFile(audioName) {
+    fs.rmSync(join(LIBRARY_FOLDER_PATH, audioName), { force: true })
+}
 function getLibraryAudioPath(audioName) {
     return join('..', LIBRARY_FOLDER_PATH, audioName)
 }
@@ -90,6 +92,10 @@ function renameSavedSetFolder(setName, newName) {
     const newSetPath = join(SAVED_SETS_FOLDER_PATH, newName)
     fs.renameSync(setPath, newSetPath)
 }
+function deleteSavedSetFolder(setName) {
+    const setPath = join(SAVED_SETS_FOLDER_PATH, setName)
+    fs.rmSync(setPath, { recursive: true, force: true })
+}
 function getFirstAvailableSetName() {                           // Returns a 'random' set name (for new sets)
     const baseSetPath = join(SAVED_SETS_FOLDER_PATH, 'Set-')
     let i = 1
@@ -101,7 +107,32 @@ function getFirstAvailableSetName() {                           // Returns a 'ra
 
 
 // Favorite Sets
-function createFavoriteSetFolderAsShortcut(setName) {
+function rewriteFavoriteSetsShortcuts(setNames) {
+    if (setNames.length < 6) throw `Given setNames should always be length 6 (with null for empty slots)`
+    // Delete previous shortcuts
+    fs.rmSync(FAVORITES_FOLDER_PATH, { recursive: true, force: true })
+    fs.mkdirSync(FAVORITES_FOLDER_PATH)
+
+    // Create shortcuts
+    for (let i = 0; i < setNames.length; i++) {
+        const setName = setNames[i]
+        if (setName == null) continue
+        const targetPath = resolve(join(SAVED_SETS_FOLDER_PATH, setName))
+        const shortcutsCreated = createDesktopShortcut({
+            windows: {
+                filePath: targetPath,
+                outputPath: FAVORITES_FOLDER_PATH,
+                name: `${i}`
+            },
+            osx: {
+                filePath: targetPath,
+                outputPath: FAVORITES_FOLDER_PATH,
+                name: `${i}`
+            }
+        })
+    }
+}
+function createFavoriteSetFolderAsShortcut(setName, index) {
     const setFolderFullPath = resolve(join(SAVED_SETS_FOLDER_PATH, setName))
     if (fs.existsSync(setFolderFullPath) == false)
         throw `Can't make shortcut for set ${setName} because it doesn't exist`
@@ -115,24 +146,33 @@ function createFavoriteSetFolderAsShortcut(setName) {
             outputPath: FAVORITES_FOLDER_PATH
         }
     })
-    console.log({shortcutsCreated})
 }
 function renameFavoriteSetShortcutFolder(setName, newSetName) {
     const setPath = join(FAVORITES_FOLDER_PATH, setName + '.lnk')
     fs.rmSync(setPath, { force: true })
     createFavoriteSetFolderAsShortcut(newSetName)
 }
-function getAllFavoriteSetNames() {
-    return Array.from(fs.readdirSync(FAVORITES_FOLDER_PATH)).map(lnk => parse(lnk).name)    // Remove the ".lnk" part; keep only the name
+function getAllFavoriteSetNamesNullIfEmpty() {
+    const allFavoriteSetNames = []
+    for (let i = 0; i <= 5; i++) {
+        const setPath = join(FAVORITES_FOLDER_PATH, i + '.lnk')
+        if (fs.existsSync(setPath)) {
+            allFavoriteSetNames.push(getShortcutTargetBasename(setPath))
+        } else {
+            allFavoriteSetNames.push(null)
+        }
+    }
+    return allFavoriteSetNames
 }
+// TODO: Also rework this
 function isSetFavorite(setName) {
-    return fs.existsSync(join(FAVORITES_FOLDER_PATH, setName + '.lnk'))
+    const setNames = getAllFavoriteSetNamesNullIfEmpty()
+    return setNames.includes(setName)
 }
 
 
 // Multiple
 function createAudioShortcutInSetFolder(setName, audioName, index) {
-    console.table({audioName, setName, index})
     const fullPathToOriginalAudio = resolve(join(LIBRARY_FOLDER_PATH, audioName))
     const pathToShortcutFolder = join(SAVED_SETS_FOLDER_PATH, setName)
     const shortcutsCreated = createDesktopShortcut({
@@ -148,12 +188,14 @@ function createAudioShortcutInSetFolder(setName, audioName, index) {
         }
     })
 }
-// TODO: Continue from here
 function retargetAudioShortcutInSetFolder(setName, index, newAudioName) {
+    deleteAudioShortcutByIndexInSetFolder(setName, index)
+    createAudioShortcutInSetFolder(setName, newAudioName, index)
+}
+function deleteAudioShortcutByIndexInSetFolder(setName, index) {
     const shortcutName = index + '.lnk'
     const shortcutPath = join(SAVED_SETS_FOLDER_PATH, setName, shortcutName)
     fs.rmSync(shortcutPath, { force: true })
-    createAudioShortcutInSetFolder(setName, newAudioName, index)
 }
 function updateSavedSetAudioShortcuts(setName, newAudioNames) {
     if (newAudioNames.length < 6) throw `For set ${setName}, newAudioNames should have length 6! It's currently: [${newAudioNames.join(',')}]`
@@ -199,32 +241,46 @@ function getSavedSetAudioNames(setName) {
 
     return allFilesInside
 }
+function getAllFilesInFolderNameKeyTimestampValue(path) {
+    const fileNames = fs.readdirSync(path)
+    const filesData = {}
+    for (const fileName of fileNames) {
+        const filePath = join(path, fileName)
+        const fileStat = fs.statSync(filePath)
+        filesData[fileName] = fileStat.birthtimeMs
+    }
+    return filesData
+}
 
 
 
 contextBridge.exposeInMainWorld('NodeCB', {
     saveAudioFilesToLibrary,
     renameLibraryAudioFile,
+    deleteLibraryAudioFile,
 
     createSavedSetFolder,
     renameSavedSetFolder,
-    createFavoriteSetFolderAsShortcut,
+    deleteSavedSetFolder,
     updateSavedSetAudioShortcuts,
     getAllSavedSetsWithAudiosData,
     getFirstAvailableSetName,
     getSavedSetAudioNames,
 
     renameFavoriteSetShortcutFolder,
-    createFavoriteSetFolderAsShortcut,
-    getAllFavoriteSetNames,
+    // createFavoriteSetFolderAsShortcut,
+    rewriteFavoriteSetsShortcuts,
+    getAllFavoriteSetNamesNullIfEmpty,
     isSetFavorite,
 
     createAudioShortcutInSetFolder,
     retargetAudioShortcutInSetFolder,
+    deleteAudioShortcutByIndexInSetFolder,
 
 
     getLibraryAudioPath,
     getAllLibraryAudioNames,
+    getAllFilesInFolderNameKeyTimestampValue,
 
 
     getOriginalAudioShortcutNameFromSavedSet,

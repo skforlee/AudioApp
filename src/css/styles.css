@@ -492,16 +492,19 @@ section {
 .contextMenu {
     display: none;
     position: fixed;
-    height: 32px;
-    padding: 0 8px;
-    border: 3px solid;
-    border-radius: 4px;
-    box-shadow: -4px 4px 0 black;
 }
 .contextMenu.visible {
     display: block;
 }
-#deleteSet:hover {
+.contextMenuItem {
+    height: 32px;
+    padding: 0 8px;
+    border: 3px solid;
+    border-radius: 4px;
+    background-color: white;
+    box-shadow: -4px 4px 0 black;
+}
+.contextMenuItem:hover {
     background-color: red;
     color: white;
 }

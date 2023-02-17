@@ -19,7 +19,7 @@ function loadSavedSets() {
 }
 function loadFavoriteSets() {
     removeAllChildren(query('#favoritesListSets'))
-    const allFavoriteSetNames = NodeCB.getAllFavoriteSetNames()
+    const allFavoriteSetNames = NodeCB.getAllFavoriteSetNamesNullIfEmpty()
     fillArrayUntilLength(allFavoriteSetNames, null, 6)
     for (const setName of allFavoriteSetNames) {
         if (setName != null) {
@@ -36,13 +36,19 @@ function setupButtonSwapping() {
     const the6Buttons = Array.from(document.querySelectorAll('.buttonInfo'))
     the6Buttons.forEach(smallButton => {
         onElementDraggedToQueryAll(smallButton, '.deviceButton', (deviceButton) => {
-            const thisName = smallButton.querySelector('h2').innerText
-            const thatName = deviceButton.querySelector('h2').innerText
-            deviceButton.querySelector('h2').innerText = thisName
-            smallButton.querySelector('h2').innerText = thatName
-            console.log(getButtonsAudioNamesNullIfEmpty())
-            updateSavedSetItemsInDomAndFiles(getCurrentlyActiveSetName(), getButtonsAudioNamesNullIfEmpty())
+            swapButtons(smallButton, deviceButton.querySelector('.buttonInfo'))
         })
+    })
+}
+function setupButtonContextMenus() {
+    const the6Buttons = Array.from(document.querySelectorAll('.deviceButton'))
+    the6Buttons.forEach(button => {
+        onRightClickContextMenu(button, 'buttonContextMenu')
+    })
+}
+function setupClosingContextMenus() {
+    window.addEventListener('click', () => {
+        hideAllContextMenus()
     })
 }
 
@@ -53,6 +59,9 @@ document.addEventListener('DOMContentLoaded', () => {
     loadFavoriteSets()
 
     setupButtonSwapping()
+    setupButtonContextMenus()
+
+    setupClosingContextMenus()
 
     if (getAnySetName() == null) {
         onNewSetClick()
@@ -72,72 +81,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-
-
-
-/* show/hide set sfx */
-// var acc = document.getElementsByClassName("dropdown-icon");
-// var i;
-
-// for (i = 0; i < acc.length; i++) {
-//     acc[i].addEventListener("click", function() {
-//         this.parentElement.parentElement.parentElement.classList.toggle("shown");
-        
-//     });
-// }
-
-/* sort a to z */
-function sortAtoZ() {
-    var list, i, switching, b, shouldSwitch;
-    list = document.getElementById("libraryItems");
-    switching = true;
-    while (switching) {
-        switching = false;
-        b = list.getElementsByTagName("li");
-        for (i = 0; i < (b.length - 1); i++) {
-            shouldSwitch = false;
-            if (b[i].innerHTML.toLowerCase() > b[i + 1].innerHTML.toLowerCase()) {
-                shouldSwitch = true;
-                break;
-            }
-        }
-        if (shouldSwitch) {
-            b[i].parentNode.insertBefore(b[i + 1], b[i]);
-            switching = true;
-        }
-    }
-}
-
-/* sort z to a */
-function sortZtoA() {
-    var list, i, switching, b, shouldSwitch;
-    list = document.getElementById("libraryItems");
-    switching = true;
-    while (switching) {
-        switching = false;
-        b = list.getElementsByTagName("li");
-        for (i = 0; i < (b.length - 1); i++) {
-            shouldSwitch = false;
-            if (b[i].innerHTML.toLowerCase() < b[i + 1].innerHTML.toLowerCase()) {
-                shouldSwitch = true;
-                break;
-            }
-        }
-        if (shouldSwitch) {
-            b[i].parentNode.insertBefore(b[i + 1], b[i]);
-            switching = true;
-        }
-    }
-}
-/* show-hide sort options */
-function showHideSortLib() {
-    var lib = document.getElementById("sort-sfx").nextElementSibling;
-    lib.classList.toggle("showHideSort");
-}
-function showHideSortSets() {
-    var sets = document.getElementById("sort-sets").nextElementSibling;
-    sets.classList.toggle("showHideSort");
-}
 // window.onclick = function(event) {
 //     if (!event.target.matches('.sortButton')) {
 //         var dropdowns = document.getElementsByClassName("sortOptions");

@@ -1,3 +1,4 @@
+
 function createLibraryItemDom({ name }) {
     const element = dom(`
         <li draggable="true" class="libraryItem">
@@ -18,27 +19,9 @@ function createLibraryItemDom({ name }) {
         element.setAttribute('data-old-input-value', element.querySelector('input').value)
     })
     element.querySelector('input').addEventListener('change', (evt) => {
-        // Rename the file in the library
         const oldName = element.getAttribute('data-old-input-value')
-        const newName = evt.target.value
-        NodeCB.renameLibraryAudioFile(oldName, newName)
-
-        // Rename the file in saved sets
-        for (const savedSetData of NodeCB.getAllSavedSetsWithAudiosData()) {
-            if (savedSetData.audioNames.includes(oldName) != -1) {
-                const audioIndex = savedSetData.audioNames.indexOf(oldName)
-                NodeCB.retargetAudioShortcutInSetFolder(savedSetData.setName, audioIndex, newName)
-            }
-        }
-
-        // Rename the audio in sets in DOM
-        for (const h2 of queryAll('.setListSfxs li h2')) {
-            if (h2.innerText == oldName)
-                h2.innerText = newName
-        }
-
-        // Rename in buttons
-        makeSetActive(getCurrentlyActiveSetName())
+        const newName = element.querySelector('input').value
+        renameLibraryAudioFromLi(element, oldName, newName)
     })
 
     onElementDraggedToQueryAll(element, '.deviceButton', (buttonDiv) => {
@@ -59,6 +42,8 @@ function createLibraryItemDom({ name }) {
             hideFullSetIndicators()
         }
     })
+
+    onRightClickContextMenu(element, 'audioContextMenu')
 
     document.querySelector('#libraryItems').appendChild(element)
     return element
@@ -101,7 +86,7 @@ function createSavedSetDom({ name, items, isFavorited, isActive }) {
                             items.map(itemName => `
                                 <li id="">
                                     <button class="sfxPlay"></button>
-                                    <h2>${itemName}</h2>
+                                    <h2 class="${itemName == '[Empty]'? 'empty': ''}">${itemName}</h2>
                                 </li>
                             `).join('')
                         }
@@ -142,6 +127,7 @@ function createSavedSetDom({ name, items, isFavorited, isActive }) {
         }
     })
     
+    onRightClickContextMenu(element, 'setContextMenu')
 
     document.querySelector('#setsList').appendChild(element)
 
@@ -168,6 +154,8 @@ function createFavoriteSetItem({ name, isEmpty }) {
         const setName = element.querySelector('h2').innerText
         makeSetActive(setName)
     })
+
+    onRightClickContextMenu(element, 'favoriteContextMenu')
 
     document.querySelector('#favoritesListSets').appendChild(element)
     return element

@@ -13,6 +13,7 @@
         <script defer src="js-lib/sortable.js"></script>
         <script defer src="js-lib/custom-dragging-events.js"></script>
         <script defer src="js-lib/audio-control.js"></script>
+        <script defer src="js-lib/context-menus.js"></script>
         <script defer src="js-lib/utils.js"></script>
 
         <script defer src="js/app-specific-utils.js"></script>
@@ -78,10 +79,10 @@
                         </div>
                         <button id="sort-sfx" class="sortButton" title="Sort" onclick="showHideSortLib()"></button>
                         <div class="sortOptions">
-                            <button class="sortByNewest"><h2>Newest</h2></button>
-                            <button class="sortByOldest"><h2>Oldest</h2></button>
-                            <button class="sortAtoZ" onclick="sortAtoZ()"><h2>A-Z</h2></button>
-                            <button class="sortZtoA" onclick="sortZtoA()"><h2>Z-A</h2></button>
+                            <button class="sortByNewest" onclick="sortLibraryNewest()"><h2>Newest</h2></button>
+                            <button class="sortByOldest" onclick="sortLibraryOldest()"><h2>Oldest</h2></button>
+                            <button class="sortAtoZ" onclick="sortLibraryAZ()"><h2>A-Z</h2></button>
+                            <button class="sortZtoA" onclick="sortLibraryZA()"><h2>Z-A</h2></button>
                         </div>
                     </div>
                     <ul id="libraryItems">
@@ -118,10 +119,10 @@
                         <button id="newSet" title="New set" onclick="onNewSetClick(event)"><h2>New set</h2></button>
                         <button id="sort-sets" class="sortButton" title="Sort" onclick="showHideSortSets()"></button>
                         <div class="sortOptions">
-                            <button class="sortByNewest"><h2>Newest</h2></button>
-                            <button class="sortByOldest"><h2>Oldest</h2></button>
-                            <button class="sortAtoZ" onclick="sortAtoZ()"><h2>A-Z</h2></button>
-                            <button class="sortZtoA" onclick="sortZtoA()"><h2>Z-A</h2></button>
+                            <button class="sortByNewest" onclick="sortSetsNewest()"><h2>Newest</h2></button>
+                            <button class="sortByOldest" onclick="sortSetsOldest()"><h2>Oldest</h2></button>
+                            <button class="sortAtoZ" onclick="sortSetsAZ()"><h2>A-Z</h2></button>
+                            <button class="sortZtoA" onclick="sortSetsZA()"><h2>Z-A</h2></button>
                         </div>
                     </div>
                     <!-- sets list -->
@@ -221,7 +222,18 @@
         <!--+++++++++++++-->
         <!-- context menu -->
         <!--+++++++++++++-->
-        <button id="deleteSet" class="contextMenu"><h2>Delete set</h2></button>
+        <div id="setContextMenu" class="contextMenu">
+            <button class="contextMenuItem" onclick="deleteSetByLi(elementJustRightClicked)"><h2>Delete Set</h2></button>
+        </div>
+        <div id="audioContextMenu" class="contextMenu">
+            <button class="contextMenuItem" onclick="deleteLibraryAudioByLi(elementJustRightClicked)"><h2>Delete Audio</h2></button>
+        </div>
+        <div id="favoriteContextMenu" class="contextMenu">
+            <button class="contextMenuItem" onclick="deleteFavoriteSetByLi(elementJustRightClicked)"><h2>Delete Favorite</h2></button>
+        </div>
+        <div id="buttonContextMenu" class="contextMenu">
+            <button class="contextMenuItem" onclick="emptyButtonByDiv(elementJustRightClicked)"><h2>Empty Button</h2></button>
+        </div>
         <!--++++++++-->
         <!-- modals -->
         <!--++++++++-->

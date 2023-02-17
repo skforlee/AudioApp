@@ -9,20 +9,69 @@ function getLibraryAudioLi(audioName) {
         return foundItems[0]
     return null
 }
+function deleteLibraryAudioByLi(li) {
+    const name = li.querySelector('input').value
+
+    // Remove from Library Dom
+    li.remove()
+
+    // Remove from sets in DOM
+    for (const h2 of queryAll('.setListSfxs li h2')) {
+        if (h2.innerText == name) {
+            h2.innerText = '[Empty]'
+            h2.classList.add('empty')
+        }
+    }
+
+    // Remove from library folder
+    NodeCB.deleteLibraryAudioFile(name)
+
+    // Remove from Sets Folder
+    for (const savedSetData of NodeCB.getAllSavedSetsWithAudiosData()) {
+        if (savedSetData.audioNames.includes(name) != -1) {
+            const audioIndex = savedSetData.audioNames.indexOf(name)
+            NodeCB.deleteAudioShortcutByIndexInSetFolder(savedSetData.setName, audioIndex)
+        }
+    }
+
+    // Delete from buttons in DOM
+    makeSetActive(getCurrentlyActiveSetName())
+
+}
+function renameLibraryAudioFromLi(li, oldName, newName) {
+    const element = li
+
+    // Rename the file library folder
+    NodeCB.renameLibraryAudioFile(oldName, newName)
+
+    // Rename the file in saved sets folders
+    for (const savedSetData of NodeCB.getAllSavedSetsWithAudiosData()) {
+        if (savedSetData.audioNames.includes(oldName) != -1) {
+            const audioIndex = savedSetData.audioNames.indexOf(oldName)
+            NodeCB.retargetAudioShortcutInSetFolder(savedSetData.setName, audioIndex, newName)
+        }
+    }
+
+    // Rename the audio in sets in DOM
+    for (const h2 of queryAll('.setListSfxs li h2')) {
+        if (h2.innerText == oldName)
+            h2.innerText = newName
+    }
+
+    // Rename the audio in buttons in DOM
+    makeSetActive(getCurrentlyActiveSetName())
+}
 
 
 // Favorites
+function getFavoriteSetsFromUINullIfEmpty() {
+    return queryAll('#favoritesListSets h2').map(h2 => h2.classList.contains('empty') || h2.innerText == '[Empty]' ? null : h2.innerText)
+}
 function isThereAnEmptySlotInFavorites() {
     const ul = document.querySelector('#favoritesListSets')
     const lis = Array.from(ul.children)
     const emptyExists = lis.some(li => li.querySelector('h2').classList.contains('empty'))
     return emptyExists
-}
-function doesFavoriteSetExist(name) {
-    const ul = document.querySelector('#favoritesListSets')
-    const lis = Array.from(ul.children)
-    const setExists = lis.some(li => li.querySelector('h2').innerHTML == name)
-    return setExists
 }
 function getAnyEmptyFavoriteSet() {
     if (isThereAnEmptySlotInFavorites() == false)
@@ -56,22 +105,34 @@ function getAnySetName() {
     return h2s[0].innerText
 }
 function tryMakeSetFavorite(setName) {
-    if (doesFavoriteSetExist(setName))
+    if (NodeCB.isSetFavorite(setName))
         return
     if (isThereAnEmptySlotInFavorites() == false)
         return
+
+    // Create it in the UI
     const anyEmptySlot = getAnyEmptyFavoriteSet()
     const newFavoriteSet = createFavoriteSetItem({ name: setName })
     anyEmptySlot.replaceWith(newFavoriteSet)
+
+    // Mark it with a star
     markSavedSetAsFavorite(setName)
-    NodeCB.createFavoriteSetFolderAsShortcut(setName)
+
+    // Create the shortcut
+    NodeCB.rewriteFavoriteSetsShortcuts(getFavoriteSetsFromUINullIfEmpty())
 }
 
 
 // Saved Sets
 function updateSlotInSavedSet(savedSetName, slotName, audioName) {
     const li = getSavedSetAudioDom(savedSetName, slotName)
-    li.querySelector('h2').innerText = audioName
+    const h2 = li.querySelector('h2')
+    h2.innerText = audioName
+    if (audioName != '[Empty]') {
+        h2.classList.remove('empty')
+    } else {
+        h2.classList.add('empty')
+    }
 }
 function replaceEmptySlotInSavedSetWithAudio(savedSetName, audioName) {
     updateSlotInSavedSet(savedSetName, '[Empty]', audioName)
@@ -118,14 +179,13 @@ function makeSetActive(setName) {
 
     // Update buttons
     const audioNames = NodeCB.getSavedSetAudioNames(setName)
-    console.log(`For set ${setName}`)
-    console.log({audioNames})
+    
     for (let i = 0; i <= 5; i++) {
         const thisButton = query(`#button${i + 1}`)
         if (audioNames[i] != null) {
-            thisButton.querySelector('h2').innerText = audioNames[i]
+            updateButton(thisButton, audioNames[i])
         } else {
-            thisButton.querySelector('h2').innerText = '[Empty]'
+            updateButton(thisButton, '[Empty]')
         }
     }
 
@@ -149,8 +209,40 @@ function renameSet(newSetName) {
         favoriteLi.querySelector('h2').innerText = newSetName
 
         // Rename favorite shortcut in folder
-        NodeCB.renameFavoriteSetShortcutFolder(oldSetName, newSetName)
+        NodeCB.rewriteFavoriteSetsShortcuts(getFavoriteSetsFromUINullIfEmpty())
     }
+}
+function deleteSetByLi(setLi) {
+    const setName = setLi.querySelector('.setTitle h2').innerText
+
+    // Remove from DOM
+    setLi.remove()
+
+    // Delete from sets folder
+    NodeCB.deleteSavedSetFolder(setName)
+
+    // Delete from favorites...
+    const favoriteLi = getFavoriteSetWithNameLi(setName)
+    if (favoriteLi != null) {
+        // ... from DOM and Folder
+       deleteFavoriteSetByLi(favoriteLi)
+    }
+
+    // Setup the rest of the UI
+    if (getAnySetName() == null) {
+        onNewSetClick()
+    }
+
+    makeSetActive(getAnySetName())
+}
+function deleteFavoriteSetByLi(favoriteLi) {
+    const favoriteH2 = favoriteLi.querySelector('h2')
+    // Delete from Dom
+    favoriteH2.innerText = ['Empty']
+    favoriteH2.classList.add('empty')
+
+    // Delete from folder
+    NodeCB.rewriteFavoriteSetsShortcuts(getFavoriteSetsFromUINullIfEmpty())
 }
 function tryAddSoundFromLibraryToSet(audioName, savedSetName) {
     if (doesSavedSetHaveAudio(savedSetName, audioName))
@@ -159,7 +251,6 @@ function tryAddSoundFromLibraryToSet(audioName, savedSetName) {
         return
     replaceEmptySlotInSavedSetWithAudio(savedSetName, audioName)
     const audioIndex = getAudioIndexInSet(savedSetName, audioName)
-    console.log({audioIndex})
     NodeCB.createAudioShortcutInSetFolder(savedSetName, audioName, audioIndex)
 }
 function getAudioIndexInSet(savedSetName, audioName) {
@@ -206,6 +297,30 @@ function getButtonsAudioNamesNullIfEmpty() {
 }
 
 
+// Buttons
+function swapButtons(button1, button2) {
+    const thisName = button1.querySelector('h2').innerText
+    const thatName = button2.querySelector('h2').innerText
+    updateButton(button2, thisName)
+    updateButton(button1, thatName)
+    updateSavedSetItemsInDomAndFiles(getCurrentlyActiveSetName(), getButtonsAudioNamesNullIfEmpty())
+}
+function emptyButtonByDiv(deviceButton) {
+    deviceButton.querySelector('h2').innerText ='[Empty]'
+    updateSavedSetItemsInDomAndFiles(getCurrentlyActiveSetName(), getButtonsAudioNamesNullIfEmpty())
+}
+function updateButton(deviceButton, newText) {
+    const h2 = deviceButton.querySelector('h2')
+    h2.innerText = newText
+    if (newText != '[Empty]') {
+        h2.classList.remove('empty')
+    } else {
+        if (h2.classList.contains('empty') == false) {
+            h2.classList.add('empty')
+        }
+    }
+}
+
 // Other
 function showFullSetIndicators() {
     const setLis = queryAll('#setsList > li')
@@ -230,3 +345,5 @@ function tryHideFullFavoritesIndicator() {
     console.log('$$$$$$$$$$$')
     query('#favoritesNotAllowedOverlay').style.display = 'none'
 }
+
+

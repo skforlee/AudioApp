@@ -40,8 +40,6 @@ function onElementDraggedToQueryAll(element, query, func, extraCallbacks) {
         onDragEnd
     } = extraCallbacks
 
-    console.log({extraCallbacks})
-
     // Setup drag end listeners for all elements matching the query
     const allElementsMatchingQuery = Array.from(document.querySelectorAll(query))
     for (const queryElem of allElementsMatchingQuery) {
