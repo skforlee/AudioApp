@@ -2,7 +2,7 @@
 // This script contains BOTH the browser window AND the Node environment
 // It exposes Node functions to the browser window
 
-const { contextBridge, shell } = require('electron')
+const { contextBridge, shell, remote, ipcRenderer } = require('electron')
 const createDesktopShortcut = require('create-desktop-shortcuts')
 const fs = require('fs')
 const { join, resolve, basename, parse } = require('path')
@@ -65,16 +65,22 @@ function deleteLibraryAudioFile(audioName) {
     fs.rmSync(join(LIBRARY_FOLDER_PATH, audioName), { force: true })
 }
 function getLibraryAudioPath(audioName) {
-    return join('..', LIBRARY_FOLDER_PATH, audioName)
+    return resolve(join(LIBRARY_FOLDER_PATH, audioName))
 }
 function getAllLibraryAudioNames() {
-    return fs.readdirSync(LIBRARY_FOLDER_PATH)
+    const allAudios = Array.from(fs.readdirSync(LIBRARY_FOLDER_PATH))
+    return allAudios.filter(audioName => audioName != 'desktop.ini')
+}
+function createAudio(audioName) {
+    const audioPath = getLibraryAudioPath(audioName)
+    const audio = new Audio(audioPath)
+    return audio
 }
 
 
 // Saved Sets
 function getAllSavedSetsWithAudiosData() {
-    const allSetNames = fs.readdirSync(SAVED_SETS_FOLDER_PATH)
+    const allSetNames = Array.from(fs.readdirSync(SAVED_SETS_FOLDER_PATH)).filter(setName => setName != 'desktop.ini')
     const setsData = allSetNames.map(setName => ({
         setName: setName,
         audioNames: getSavedSetAudioNames(setName)
@@ -93,31 +99,53 @@ function renameSavedSetFolder(setName, newName) {
     fs.renameSync(setPath, newSetPath)
 }
 function deleteSavedSetFolder(setName) {
+    console.log(`NodeCB: Deleting set folder for set ${setName}`)
     const setPath = join(SAVED_SETS_FOLDER_PATH, setName)
-    fs.rmSync(setPath, { recursive: true, force: true })
+    console.log(`NodeCB: Found path "${setPath}"`)
+    const absolutePath = resolve(setPath)
+    console.log(`NodeCB: Found absolute path "${absolutePath}"`)
+    
+    try {
+        fs.rmSync(absolutePath, { recursive: true, force: true })
+    } catch (e) {
+        console.log(`NodeCB: ERROR`)
+        console.log(e)
+    }
 }
 function getFirstAvailableSetName() {                           // Returns a 'random' set name (for new sets)
-    const baseSetPath = join(SAVED_SETS_FOLDER_PATH, 'Set-')
+    const baseSetPath = join(SAVED_SETS_FOLDER_PATH, 'Untitled Set ')
     let i = 1
     while (fs.existsSync(baseSetPath + i)) {
         i += 1
     }
-    return `Set-${i}`
+    return `Untitled Set ${i}`
 }
 
 
 // Favorite Sets
 function rewriteFavoriteSetsShortcuts(setNames) {
+    console.log('Deleting (NodeCB): got set names:' + setNames.join(', '))
+    console.log({setNames})
     if (setNames.length < 6) throw `Given setNames should always be length 6 (with null for empty slots)`
     // Delete previous shortcuts
-    fs.rmSync(FAVORITES_FOLDER_PATH, { recursive: true, force: true })
-    fs.mkdirSync(FAVORITES_FOLDER_PATH)
+    // There if's are there to counteract some strange Windows behavior
+    if (fs.existsSync(FAVORITES_FOLDER_PATH)) {
+        console.log('Deleting (NodeCB): Favorites exists. Deleting it to recreate it...')
+        fs.rmSync(FAVORITES_FOLDER_PATH, { recursive: true, force: true })
+    }
+    if (fs.existsSync(FAVORITES_FOLDER_PATH) == false) {
+        console.log('Deleting (NodeCB): Favorites does not exist now. Creating it...')
+        fs.mkdirSync(FAVORITES_FOLDER_PATH)
+    }
+    console.log(`Deleting (NodeCB): Recreated favorites folder. Success? ${fs.existsSync(FAVORITES_FOLDER_PATH)}`)
 
     // Create shortcuts
     for (let i = 0; i < setNames.length; i++) {
         const setName = setNames[i]
+        console.log(`Deleting (NodeCB): Recreating favorite set ${setName}`)
         if (setName == null) continue
         const targetPath = resolve(join(SAVED_SETS_FOLDER_PATH, setName))
+        console.log(`Deleting (NodeCB): i=${i}, targetPath=${targetPath}`)
         const shortcutsCreated = createDesktopShortcut({
             windows: {
                 filePath: targetPath,
@@ -130,6 +158,7 @@ function rewriteFavoriteSetsShortcuts(setNames) {
                 name: `${i}`
             }
         })
+        console.log(`Deleting (NodeCB): Shortcuts created? ${shortcutsCreated}`)
     }
 }
 function createFavoriteSetFolderAsShortcut(setName, index) {
@@ -201,7 +230,8 @@ function updateSavedSetAudioShortcuts(setName, newAudioNames) {
     if (newAudioNames.length < 6) throw `For set ${setName}, newAudioNames should have length 6! It's currently: [${newAudioNames.join(',')}]`
 
     // Remove old shortcuts
-    const oldShortcuts = fs.readdirSync(join(SAVED_SETS_FOLDER_PATH, setName)).map(lnk => join(SAVED_SETS_FOLDER_PATH, setName, lnk))
+    const filesInFolder = Array.from(fs.readdirSync(join(SAVED_SETS_FOLDER_PATH, setName))).filter(fileName => fileName != 'desktop.ini')
+    const oldShortcuts = filesInFolder.map(lnk => join(SAVED_SETS_FOLDER_PATH, setName, lnk))
     for (const s of oldShortcuts)
         fs.rmSync(s, { force: true })
 
@@ -215,6 +245,17 @@ function updateSavedSetAudioShortcuts(setName, newAudioNames) {
 
 
 // Utils
+function initFolders() {
+    if (fs.existsSync('sets') == false) {
+        fs.mkdirSync('sets')
+    }
+    if (fs.existsSync('library') == false) {
+        fs.mkdirSync('library')
+    }
+    if (fs.existsSync('favorites') == false) {
+        fs.mkdirSync('favorites')
+    }
+}
 function getShortcutTargetBasename(shortcutPath) {
     const parsed = shell.readShortcutLink(shortcutPath)
     const shortcutTarget = parsed.target
@@ -242,7 +283,7 @@ function getSavedSetAudioNames(setName) {
     return allFilesInside
 }
 function getAllFilesInFolderNameKeyTimestampValue(path) {
-    const fileNames = fs.readdirSync(path)
+    const fileNames = Array.from(fs.readdirSync(path)).filter(fileName => fileName != 'desktop.ini')
     const filesData = {}
     for (const fileName of fileNames) {
         const filePath = join(path, fileName)
@@ -251,7 +292,15 @@ function getAllFilesInFolderNameKeyTimestampValue(path) {
     }
     return filesData
 }
-
+function quit() {
+    ipcRenderer.invoke('quit-app')    // See index.js
+}
+function openDevConsole() {
+    ipcRenderer.invoke('open-dev-console')    // See index.js
+}
+function openExternalLink(url) {
+    shell.openExternal(url)
+}
 
 
 contextBridge.exposeInMainWorld('NodeCB', {
@@ -278,12 +327,17 @@ contextBridge.exposeInMainWorld('NodeCB', {
     deleteAudioShortcutByIndexInSetFolder,
 
 
-    getLibraryAudioPath,
+    // getLibraryAudioPath,
+    createAudio,
     getAllLibraryAudioNames,
     getAllFilesInFolderNameKeyTimestampValue,
 
 
+    initFolders,
     getOriginalAudioShortcutNameFromSavedSet,
+    openExternalLink,
     shell,
+    openDevConsole,
+    quit,
     fs
 })

@@ -1,6 +1,9 @@
 /***********/
 /* GLOBALS */
 /***********/
+:root {
+    --menu-bar-height: 32px;
+}
 html, body, div, span, h1, h2, h3, h4, h5, h6, p, a, img, ul, li, form, label, canvas, header, footer, menu, nav, section, audio, video {
 	margin: 0;
 	padding: 0;
@@ -126,10 +129,16 @@ header {
     align-items: center;
     height: 100%;
 }
+#menuBar {
+    height: var(--menu-bar-height);
+}
+#menuBarItems {
+    height: var(--menu-bar-height);
+}
 .menuBarItem {
     display: flex;
     align-items: center;
-    height: 100%;
+    height: calc(100% - 3px);
     margin-right: 12px;
     padding: 0 8px;
     cursor: pointer;
@@ -139,6 +148,10 @@ header {
 }
 .menuBarItem:last-child {
     margin-right: 0;
+}
+.menuBarItem > h2 {
+    height: 100%;
+    line-height: var(--menu-bar-height);
 }
 #volume-control-container {
     display: flex;
@@ -227,7 +240,6 @@ input[type=range]::-moz-range-thumb {
     display: flex;
     align-items: center;
     height: 32px;
-    padding: 4px 30px 4px 10px;
     border-bottom: 1px dotted;
     font-family: "Press Start 2P", monospace;
     font-size: 10px;
@@ -241,6 +253,13 @@ input[type=range]::-moz-range-thumb {
 }
 .menuBarDropdown:hover {
     background-color: #e5e5e5;
+}
+.menuBarDropdown > h2, .menuBarDropdown > a {
+    height: 100%;
+    width: 100%;
+    padding: 4px 30px 4px 10px;
+    display: block;
+    line-height: calc(32px - 2px);
 }
 #instructionsOption {
     padding: 0;
@@ -352,14 +371,34 @@ section {
     padding-left: 8px;
     border-bottom: 3px solid;
 }
-.toolbar input {
+.toolbar .searchContainer {
     flex-grow: 1;
+    position: relative;
+}
+.toolbar input {
+    width: 100%;
     padding-left: 26px;
     background-image: url(../img/search.svg);
     background-position: 4px center;
     background-repeat: no-repeat;
     background-size: 16px;
     border: 2px solid;
+}
+.toolbar .searchContainer .clearSearchButton {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+
+    background-image: url('../img/close--filled.svg');
+    background-position: center;
+    background-size: 100%;
+    background-repeat: no-repeat;
+    
+    height: 14px;
+    width: 14px;
+}
+.toolbar .clearSearchButton:hover {
+    background-image: url('../img/close.svg');
 }
 .toolbar .sortButton {
     flex-shrink: 0;
@@ -418,10 +457,10 @@ section {
     background-image: url(../img/play--outline.svg);
 }
 .sfxPlay--pause {
-    background-image: url(../img/pause--filled.svg);
+    background-image: url(../img/stop--filled--alt.svg);
 }
 .sfxPlay--pause:hover {
-    background-image: url(../img/pause--outline.svg);
+    background-image: url(../img/stop.svg);
 }
 .fileFolder {
     flex-grow: 1;
@@ -493,9 +532,6 @@ section {
     display: none;
     position: fixed;
 }
-.contextMenu.visible {
-    display: block;
-}
 .contextMenuItem {
     height: 32px;
     padding: 0 8px;
@@ -526,7 +562,7 @@ dialog {
     border: 0;
     z-index: 999;
 }
-dialog div {
+dialog > div {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -944,7 +980,7 @@ dialog img {
 .deviceEditor {
     position: relative;
     height: 50cqh;
-    width: 90cqw;
+    width: 100%;
     margin-left: 8px;
     margin-top: -8px;
     border-radius: 4px;
@@ -1031,17 +1067,28 @@ dialog img {
     height: 15px;
     left: -11px;
 }
-#setEditor .deviceButton:active {
-    translate: -16px 16px;
+#setEditor .deviceButton--active {
+    translate: -16px 16px !important;
 }
-#setEditor .deviceButton:active::before {
+#setEditor .deviceButton--active::before {
+    top: -.5px !important;
+    width: 1px !important;
+}
+#setEditor .deviceButton--active::after {
+    height: 1px !important;
+    left: -3px !important;
+}
+/* #setEditor .deviceButton:active {
+    translate: -16px 16px;
+} */
+/* #setEditor .deviceButton:active::before {
     top: -.5px;
     width: 1px;
 }
 #setEditor .deviceButton:active::after {
     height: 1px;
     left: -3px;
-}
+} */
 .buttonInfo {
     display: flex;
     align-items: center;
@@ -1121,6 +1168,18 @@ dialog img {
 
 
 /* Extra added styling */
+.placeholder-marked-blue {
+    background-color: rgb(200, 235, 251);
+}
+.visible {
+    display: block !important;
+}
+.two-buttons {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+}
 #notAllowedCursorImg {
     position: absolute;
     z-index: 999999999;
@@ -1163,15 +1222,18 @@ dialog img {
     opacity: 0.9;
     color: black;
     text-align: center;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+#favoritesNotAllowedOverlay .centerer {
+    display: flex;
+    align-items: center;
 }
 #favoritesNotAllowedOverlay h1 {
     display: block;
-    
-    margin: auto;
-    vertical-align: middle;
-    width: 70%;
 
-    margin-top: 65px;
     line-height: 20px;
 
     word-wrap: normal;

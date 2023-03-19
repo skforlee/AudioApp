@@ -7,11 +7,14 @@
                 name: groupName,
             },
             animation: 150,
-            ghostClass: 'dragBackgroundColor'
+            ghostClass: 'dragBackgroundColor',
+            onUpdate: function(evt) {   // When sorting favorites...
+                NodeCB.rewriteFavoriteSetsShortcuts(getFavoriteSetsFromUINullIfEmpty()) // Rewrite shortcuts 
+            }
         })
     }
 
-    setupStandardDragAndDropSortingFor(document.querySelector('#setsList'), 'sets')
+    // setupStandardDragAndDropSortingFor(document.querySelector('#setsList'), 'sets')
     setupStandardDragAndDropSortingFor(document.querySelector('#favoritesListSets'), 'favorites')
-    setupStandardDragAndDropSortingFor(document.querySelector('#libraryItems'), 'library')
+    // setupStandardDragAndDropSortingFor(document.querySelector('#libraryItems'), 'library')
 }

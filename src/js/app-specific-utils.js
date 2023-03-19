@@ -27,37 +27,45 @@ function deleteLibraryAudioByLi(li) {
     NodeCB.deleteLibraryAudioFile(name)
 
     // Remove from Sets Folder
-    for (const savedSetData of NodeCB.getAllSavedSetsWithAudiosData()) {
-        if (savedSetData.audioNames.includes(name) != -1) {
-            const audioIndex = savedSetData.audioNames.indexOf(name)
-            NodeCB.deleteAudioShortcutByIndexInSetFolder(savedSetData.setName, audioIndex)
+    for (const savedSetData of NodeCB.getAllSavedSetsWithAudiosData()) {    // For each set...
+        const audioNames = savedSetData.audioNames
+        for (let i = 0; i < audioNames.length; i++) {                       // For each audio name in that set...
+            const audioName = audioNames[i]
+            if (audioName == name) {
+                NodeCB.deleteAudioShortcutByIndexInSetFolder(savedSetData.setName, i)
+            }
         }
     }
 
-    // Delete from buttons in DOM
+    // Update numbers - e.g "Library <17>"
+    updateLibraryAndSavedSetsTitleNumber()
+
+    // Remove from buttons in DOM
     makeSetActive(getCurrentlyActiveSetName())
 
 }
-function renameLibraryAudioFromLi(li, oldName, newName) {
-    const element = li
-
+function renameLibraryAudioFromLi(li, oldFileName, newFileName) {
     // Rename the file library folder
-    NodeCB.renameLibraryAudioFile(oldName, newName)
+    console.log('- Renaming library audio file...')
+    NodeCB.renameLibraryAudioFile(oldFileName, newFileName)
 
+    console.log('- In sets folders....')
     // Rename the file in saved sets folders
     for (const savedSetData of NodeCB.getAllSavedSetsWithAudiosData()) {
-        if (savedSetData.audioNames.includes(oldName) != -1) {
-            const audioIndex = savedSetData.audioNames.indexOf(oldName)
-            NodeCB.retargetAudioShortcutInSetFolder(savedSetData.setName, audioIndex, newName)
+        if (savedSetData.audioNames.includes(oldFileName) != -1) {
+            const audioIndex = savedSetData.audioNames.indexOf(oldFileName)
+            NodeCB.retargetAudioShortcutInSetFolder(savedSetData.setName, audioIndex, newFileName)
         }
     }
 
+    console.log('- DOM')
     // Rename the audio in sets in DOM
     for (const h2 of queryAll('.setListSfxs li h2')) {
-        if (h2.innerText == oldName)
-            h2.innerText = newName
+        if (h2.innerText == oldFileName)
+            h2.innerText = newFileName
     }
 
+    console.log('- Buttons')
     // Rename the audio in buttons in DOM
     makeSetActive(getCurrentlyActiveSetName())
 }
@@ -68,8 +76,8 @@ function getFavoriteSetsFromUINullIfEmpty() {
     return queryAll('#favoritesListSets h2').map(h2 => h2.classList.contains('empty') || h2.innerText == '[Empty]' ? null : h2.innerText)
 }
 function isThereAnEmptySlotInFavorites() {
-    const ul = document.querySelector('#favoritesListSets')
-    const lis = Array.from(ul.children)
+    const lis = queryAll('#favoritesListSets li')
+    console.log(lis)
     const emptyExists = lis.some(li => li.querySelector('h2').classList.contains('empty'))
     return emptyExists
 }
@@ -104,14 +112,35 @@ function getAnySetName() {
     if (h2s.length == 0) return null
     return h2s[0].innerText
 }
+function tryMakeSetFavoriteInSlotLi(setName, li) {
+    if (li.querySelector('h2').classList.contains('empty') == false) {
+        deleteFavoriteSetByLi(li, { dontRewriteShortcuts: true })   // Prevent rewriting shortcuts because we rewrite them a bit later here
+    }
+    // Create it in UI
+    const newFavoriteSet = createFavoriteSetItem({ name: setName })
+    li.replaceWith(newFavoriteSet)
+
+    // Mark it with a star
+    markSavedSetAsFavorite(setName)
+
+    // Create the shortcut
+    NodeCB.rewriteFavoriteSetsShortcuts(getFavoriteSetsFromUINullIfEmpty())
+
+}
 function tryMakeSetFavorite(setName) {
-    if (NodeCB.isSetFavorite(setName))
+    if (NodeCB.isSetFavorite(setName)) {
+        console.log(`Favorite: set ${setName} is already favorite.`)
         return
-    if (isThereAnEmptySlotInFavorites() == false)
+    }
+    if (isThereAnEmptySlotInFavorites() == false) {
+        console.log(`Favorite: no empty slot.`)
         return
+    }
 
     // Create it in the UI
     const anyEmptySlot = getAnyEmptyFavoriteSet()
+    console.log(`anyEmptySlot:`)
+    console.log({anyEmptySlot})
     const newFavoriteSet = createFavoriteSetItem({ name: setName })
     anyEmptySlot.replaceWith(newFavoriteSet)
 
@@ -121,7 +150,16 @@ function tryMakeSetFavorite(setName) {
     // Create the shortcut
     NodeCB.rewriteFavoriteSetsShortcuts(getFavoriteSetsFromUINullIfEmpty())
 }
-
+function _isElementBeingDraggedASavedSet() {
+    if (dragState.elementBeingDragged == null) return false
+    return dragState.elementBeingDragged.classList.contains('savedSetsSet')
+}
+function _resetFavoriteDragDropAnimationForLi(li) {
+    li.querySelector('.fileFolder').classList.remove('placeholder-marked-blue')
+    if (li.querySelector('h2').classList.contains('empty')) {
+        li.querySelector('h2').innerText = '[Empty]'
+    }
+}
 
 // Saved Sets
 function updateSlotInSavedSet(savedSetName, slotName, audioName) {
@@ -139,7 +177,16 @@ function replaceEmptySlotInSavedSetWithAudio(savedSetName, audioName) {
 }
 function markSavedSetAsFavorite(setName) {
     const savedSet = getSavedSetWithNameDom(setName)
-    savedSet.classList.toggle('favorited')
+    if (savedSet.classList.contains('favorited') == false) {
+        savedSet.classList.add('favorited')
+    }
+}
+function unmarkSavedSetAsFavorite(setName) {
+    const savedSet = getSavedSetWithNameDom(setName)
+    if (savedSet == null) return
+    if (savedSet.classList.contains('favorited')) {
+        savedSet.classList.remove('favorited')
+    }
 }
 function doesSavedSetHaveAudio(savedSetName, audioName) {
     return getSavedSetAudioDom(savedSetName, audioName) != null
@@ -179,6 +226,7 @@ function makeSetActive(setName) {
 
     // Update buttons
     const audioNames = NodeCB.getSavedSetAudioNames(setName)
+    console.log({audioNames})
     
     for (let i = 0; i <= 5; i++) {
         const thisButton = query(`#button${i + 1}`)
@@ -193,9 +241,34 @@ function makeSetActive(setName) {
     query('#setNameInput').value = setName
 
 }
+
+
+
 function renameSet(newSetName) {
+
+    function fixNewSetName(newSetName) {
+        const setData = NodeCB.getAllSavedSetsWithAudiosData()
+        const thisSetNameExists = (setName) => setData.some(sd => sd.setName == setName)
+        if (thisSetNameExists(newSetName) == false) {    // set name does not exist
+            return newSetName
+        }
+        let setCopyIndex = 1
+        let finalSetName
+        do {
+            finalSetName = newSetName + ' (' + setCopyIndex + ')'
+            setCopyIndex += 1
+        } while (thisSetNameExists(finalSetName))
+    
+        return finalSetName
+    }
+    
+
+    newSetName = fixNewSetName(newSetName)  // Changes the name to fix duplicate names
     const activeSetLi = getCurrentlyActiveSetLi()
     const oldSetName = activeSetLi.querySelector('.setTitle h2').innerText
+
+    // Fix rename input value
+    query('#setNameInput').value = newSetName
 
     // Update name in saved sets UI
     activeSetLi.querySelector('.setTitle h2').innerText = newSetName
@@ -213,19 +286,26 @@ function renameSet(newSetName) {
     }
 }
 function deleteSetByLi(setLi) {
+    console.log(`D: Deleting set...`)
     const setName = setLi.querySelector('.setTitle h2').innerText
+    console.log(`D: Named ${setName}`)
 
     // Remove from DOM
     setLi.remove()
+    console.log(`D: Removed <li>`)
 
     // Delete from sets folder
+    console.log(`D: Deleting set folder...`)
     NodeCB.deleteSavedSetFolder(setName)
 
+
     // Delete from favorites...
-    const favoriteLi = getFavoriteSetWithNameLi(setName)
-    if (favoriteLi != null) {
-        // ... from DOM and Folder
-       deleteFavoriteSetByLi(favoriteLi)
+    const favoriteLis = queryAll('#favoritesListSets li').filter(li => li.querySelector('h2').innerText == setName)
+    if (favoriteLis.length != 0) {
+        for (const favoriteLi of favoriteLis) {
+            deleteFavoriteSetByLi(favoriteLi, { dontRewriteShortcuts: true })
+        }
+        NodeCB.rewriteFavoriteSetsShortcuts(getFavoriteSetsFromUINullIfEmpty())
     }
 
     // Setup the rest of the UI
@@ -234,15 +314,29 @@ function deleteSetByLi(setLi) {
     }
 
     makeSetActive(getAnySetName())
+    updateLibraryAndSavedSetsTitleNumber()
 }
-function deleteFavoriteSetByLi(favoriteLi) {
+function deleteFavoriteSetByLi(favoriteLi, options) {
+    options = options == null? {} : options
+
     const favoriteH2 = favoriteLi.querySelector('h2')
+    const setName = favoriteH2.innerText
+    console.log(`Deleting: setName = ${setName}`)
     // Delete from Dom
-    favoriteH2.innerText = ['Empty']
+    favoriteH2.innerText = ['[Empty]']
     favoriteH2.classList.add('empty')
+    
+    // Update star
+    const allSetNames = queryAll('#favoritesListSets li h2').map(h2 => h2.innerText)
+    if (allSetNames.some(name => name == setName) == false) {   // Only remove star if there is NOT another favorite of the same set
+        unmarkSavedSetAsFavorite(setName)
+    }
 
     // Delete from folder
-    NodeCB.rewriteFavoriteSetsShortcuts(getFavoriteSetsFromUINullIfEmpty())
+    if (options.dontRewriteShortcuts != true)  {
+        console.log('Deleting: rewriting shortcuts...')
+        NodeCB.rewriteFavoriteSetsShortcuts(getFavoriteSetsFromUINullIfEmpty())
+    }
 }
 function tryAddSoundFromLibraryToSet(audioName, savedSetName) {
     if (doesSavedSetHaveAudio(savedSetName, audioName))
@@ -307,6 +401,7 @@ function swapButtons(button1, button2) {
 }
 function emptyButtonByDiv(deviceButton) {
     deviceButton.querySelector('h2').innerText ='[Empty]'
+    deviceButton.querySelector('h2').classList.add('empty')
     updateSavedSetItemsInDomAndFiles(getCurrentlyActiveSetName(), getButtonsAudioNamesNullIfEmpty())
 }
 function updateButton(deviceButton, newText) {
@@ -320,6 +415,12 @@ function updateButton(deviceButton, newText) {
         }
     }
 }
+// function resetAllButtonDragVisualEffects(button) {
+//     const the6ButtonTitles = queryAll('.buttonInfo')
+//     the6ButtonTitles.forEach(smallButton => {
+//         button.classList.remove('placeholder-marked-blue')
+//     })
+// }
 
 // Other
 function showFullSetIndicators() {
@@ -345,5 +446,20 @@ function tryHideFullFavoritesIndicator() {
     console.log('$$$$$$$$$$$')
     query('#favoritesNotAllowedOverlay').style.display = 'none'
 }
-
+function tryColorFavoritesSet() {
+    if (isThereAnEmptySlotInFavorites()) {
+        const emptySlot = getAnyEmptyFavoriteSet()
+        emptySlot.querySelector('.fileFolder').classList.add('placeholder-marked-blue')
+    }
+}
+function uncolorAllFavoritesSets() {
+    const fileFolders = queryAll('#favoritesListSets .fileFolder')
+    for (const div of fileFolders) {
+        div.classList.remove('placeholder-marked-blue')
+    }
+}
+function updateLibraryAndSavedSetsTitleNumber() {
+    query('#numberOfItemsLibrary').innerText = query('#libraryItems').children.length
+    query('#numberOfItemsSets').innerText = query('#setsList').children.length
+}
 

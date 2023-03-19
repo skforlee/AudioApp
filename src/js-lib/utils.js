@@ -202,6 +202,13 @@ function isUpperCase(str){
 function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
+function removeExtension(x) {
+    return x.replace(/\.[^/.]+$/, "")
+}
+function getExtension(x) {
+    const re = /(?:\.([^.]+))?$/;
+    return re.exec(x)[1]
+}
 
 
 
@@ -247,4 +254,18 @@ function sortChildren(div, sortFunc) {
     for (const child of divChildren) {
         div.appendChild(child)
     }
+}
+function onEscapeKeyPress(callback) {
+    document.addEventListener('keydown', evt => {
+        evt = evt || window.event
+        let isEscape = false
+        if ('key' in evt) {
+            isEscape = (evt.key === 'Escape' || evt.key === 'Esc')
+        } else {
+            isEscape = (evt.key === 27)
+        }
+        if (isEscape) {
+            callback(evt)
+        }
+    })
 }

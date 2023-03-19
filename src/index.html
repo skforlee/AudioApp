@@ -10,11 +10,11 @@
             src="https://code.jquery.com/jquery-3.6.3.js"
             integrity="sha256-nQLuAZGRRcILA+6dMBOvcRh5Pe310sBpanc6+QBmyVM="
             crossorigin="anonymous"></script>
+        <script defer src="js-lib/utils.js"></script>
         <script defer src="js-lib/sortable.js"></script>
         <script defer src="js-lib/custom-dragging-events.js"></script>
         <script defer src="js-lib/audio-control.js"></script>
         <script defer src="js-lib/context-menus.js"></script>
-        <script defer src="js-lib/utils.js"></script>
 
         <script defer src="js/app-specific-utils.js"></script>
         <script defer src="js/drag-and-drop-sorting.js"></script>
@@ -32,19 +32,22 @@
                 <ul id="menuBarItems">
                     <!-- file -->
                     <li id="file" class="menuBarItem">
-                        <h2>File</h2>
+                        <h2 onclick="toggleFileMenu(event)">File</h2>
                         <ul id="menuBarFileDropdown" class="menuItemContent">
-                            <li id="uploadSfxOption" class="menuBarDropdown"><h2>Upload SFX</h2></li>
-                            <li id="createSetOption" class="menuBarDropdown"><h2>New Set</h2></li>
-                            <li id="exitOption" class="menuBarDropdown"><h2>Exit</h2></li>
+                            <li id="uploadSfxOption" class="menuBarDropdown"><h2 onclick="query('#upload input').click()">Upload SFX</h2></li>
+                            <li id="createSetOption" class="menuBarDropdown"><h2 onclick="onNewSetClick(event)">New Set</h2></li>
+                            <li id="refreshOption" class="menuBarDropdown"><h2 onclick="loadLibraryAudios()">Refresh Library</h2></li>
+                            <li id="exitOption" class="menuBarDropdown"><h2 onclick="NodeCB.quit()">Exit</h2></li>
                         </ul>
                     </li>
                     <!-- help -->
                     <li id="help" class="menuBarItem">
-                        <h2>Help</h2>
+                        <h2 onclick="toggleHelpMenu(event)">Help</h2>
                         <ul id="menuBarHelpDropdown" class="menuItemContent">
-                            <li id="instructionsOption" class="menuBarDropdown"><a href="https://sfx-6.com/instructions/" target="_blank">How to use</a></li>
-                            <li id="aboutOption" class="menuBarDropdown" onclick="document.getElementById('aboutInfoContainer').style.display = 'flex';">About</li>
+                            <!-- <li id="instructionsOption" class="menuBarDropdown"><a href="https://sfx-6.com/instructions/" target="_blank">How to use</a></li> -->
+                            <li id="instructionsOption" class="menuBarDropdown"><a href="#" onclick="NodeCB.openExternalLink('https://sfx-6.com/instructions/')">How to use</a></li>
+                            <li id="aboutOption" class="menuBarDropdown"><h2 onclick="openDialog('aboutInfoContainer', event)">About</h2></li>
+                            <li id="aboutOption" class="menuBarDropdown"><h2 onclick="NodeCB.openDevConsole()">Open Dev Tools</h2></li>
                         </ul>
                     </li>
                 </ul>
@@ -56,7 +59,7 @@
             <!-- volume control -->
             <div id="volume-control-container">
                 <img src="img/volume.svg">
-                <input id="volume-control" type="range" min="0" max="1" step="0.01" value="1" onchange="changeVolume(event.target.value)" oninput="changeVolume(event.target.value)">
+                <input id="volume-control" type="range" min="0" max="1" step="0.01" value="0.5" onchange="changeVolume(event.target.value)" oninput="changeVolume(event.target.value)">
             </div>
         </header>
         <!--++++++-->
@@ -68,16 +71,19 @@
                 <!--library-->
                 <section id="sfxLibrary">
                     <div class="sectionTitle">
-                        <button class="showDialog" title="Help" onclick="document.getElementById('libraryInstructions').style.display='flex';"></button>
-                        <h1>Library (<span id="">24</span>)</h1>
+                        <button class="showDialog" title="Help" onclick="openDialog('libraryInstructions', event)"></button>
+                        <h1>Library (<span id="numberOfItemsLibrary">0</span>)</h1>
                     </div>
                     <div class="toolbar">
-                        <input id="searchSFX" type="text" placeholder="Search" oninput="onSearchChange(this.value)">
+                        <div class="searchContainer">
+                            <input id="searchSFX" type="text" placeholder="Search" oninput="onLibrarySearchChange(this.value)">
+                            <button class="clearSearchButton hidden" onclick="clearAfferentSearchInput(event)"></button>
+                        </div>
                         <div id="upload" title="Upload SFX">
                             <input type="file" accept=".wav,.mp3" multiple onchange="onUploadSFXInputChange(event)">
                             <h2>Upload</h2>
                         </div>
-                        <button id="sort-sfx" class="sortButton" title="Sort" onclick="showHideSortLib()"></button>
+                        <button id="sort-sfx" class="sortButton" title="Sort" onclick="showHideSortLib(event)"></button>
                         <div class="sortOptions">
                             <button class="sortByNewest" onclick="sortLibraryNewest()"><h2>Newest</h2></button>
                             <button class="sortByOldest" onclick="sortLibraryOldest()"><h2>Oldest</h2></button>
@@ -109,15 +115,18 @@
                 <section id="savedSets">
                     <!-- sets title -->
                     <div class="sectionTitle">
-                        <button id="" class="showDialog" title="Help" onclick="document.getElementById('setsInstructions').style.display='flex';"></button>
-                        <h1>Saved Sets (<span id="">6</span>)</h1>
+                        <button id="" class="showDialog" title="Help" onclick="openDialog('setsInstructions', event)"></button>
+                        <h1>Saved Sets (<span id="numberOfItemsSets">6</span>)</h1>
                     </div>
                     <!-- sets toolbar -->
                     <div class="toolbar">
                         <label for="search-sets"></label>
-                        <input id="search-sets" class="search" type="text" placeholder="Search">
-                        <button id="newSet" title="New set" onclick="onNewSetClick(event)"><h2>New set</h2></button>
-                        <button id="sort-sets" class="sortButton" title="Sort" onclick="showHideSortSets()"></button>
+                        <div class="searchContainer">
+                            <input id="search-sets" class="search" type="text" placeholder="Search" oninput="onSetsSearchChange(this.value)">
+                            <button class="clearSearchButton hidden" onclick="clearAfferentSearchInput(event)"></button>
+                        </div>
+                        <button id="newSet" title="New set" onclick="onNewSetClick()"><h2>New set</h2></button>
+                        <button id="sort-sets" class="sortButton" title="Sort" onclick="showHideSortSets(event)"></button>
                         <div class="sortOptions">
                             <button class="sortByNewest" onclick="sortSetsNewest()"><h2>Newest</h2></button>
                             <button class="sortByOldest" onclick="sortSetsOldest()"><h2>Oldest</h2></button>
@@ -135,13 +144,15 @@
                 <section id="favorites">
                     <!--favorites titlebar-->
                     <div class="sectionTitle">
-                        <button id="" class="showDialog" title="Help" onclick="document.getElementById('favoritesInstructions').style.display='flex';"></button>
+                        <button id="" class="showDialog" title="Help" onclick="openDialog('favoritesInstructions', event)"></button>
                         <h1>Favorites</h1>
                     </div>
                     <!--favorites list-->
                     <div id="favoritesList">
                         <div id="favoritesNotAllowedOverlay" style="display: none">
-                            <h1>Only 6 favorite sets are allowed</h1>
+                            <div class="centerer">
+                                <h1>Only 6 favorite sets are allowed. Right-click to remove a favorite set.</h1>
+                            </div>
                         </div>
                         <ul class="listIndex">
                             <li><img src="img/number--small--1.svg"></li>
@@ -163,53 +174,55 @@
                 <!-- editor -->
                 <section id="setEditor">
                     <div class="sectionTitle"> <!-- title -->
-                        <button id="" class="showDialog" title="Help" onclick="document.getElementById('editorInstructions').style.display='flex';"></button>
+                        <button id="" class="showDialog" title="Help" onclick="openDialog('editorInstructions', event)"></button>
                         <h1>Set Editor</h1>
                     </div>
                     <div class="toolbar"> <!-- toolbar -->
-                        <input id="setNameInput" type="text" value="Example set 3" onclick="this.select()" onchange="renameSet(event.target.value)">
+                        <div class="searchContainer">
+                            <input id="setNameInput" type="text" value="Example set 3" onclick="this.select()" onchange="renameSet(event.target.value)">
+                        </div>
                     </div>
                     <div id="" class="deviceContainer">
                         <div id="" class="deviceEditor">
                             <div class="deviceRow deviceRow1">
-                                <div id="button1" class="deviceButton" onclick="onBigButtonClick(event)">
+                                <div id="button1" class="deviceButton" onclick="onBigButtonClick(event)" onmousedown="onBigButtonMouseDown(event)" onmouseup="onBigButtonMouseUp(event)" onmouseout="onBigButtonMouseOut(event)">
                                     <div class="buttonInfo" draggable="true">
-                                        <h2>Wolf howl</h2>
+                                        <h2>Loading...</h2>
                                         <div class="dragArea"></div>
                                     </div>
                                     <!--
                                     <button class="deleteSfx"></button>
                                     -->
                                 </div>
-                                <div id="button2" class="deviceButton" onclick="onBigButtonClick(event)">
+                                <div id="button2" class="deviceButton" onclick="onBigButtonClick(event)" onmousedown="onBigButtonMouseDown(event)" onmouseup="onBigButtonMouseUp(event)" onmouseout="onBigButtonMouseOut(event)">
                                     <div class="buttonInfo" draggable="true">
-                                        <h2>Dog bark</h2>
+                                        <h2>Loading...</h2>
                                         <div class="dragArea"></div>
                                     </div>
                                 </div>
-                                <div id="button3" class="deviceButton" onclick="onBigButtonClick(event)">
+                                <div id="button3" class="deviceButton" onclick="onBigButtonClick(event)" onmousedown="onBigButtonMouseDown(event)" onmouseup="onBigButtonMouseUp(event)" onmouseout="onBigButtonMouseOut(event)">
                                     <div class="buttonInfo" draggable="true">
-                                        <h2>Cat meow</h2>
+                                        <h2>Loading...</h2>
                                         <div class="dragArea"></div>
                                     </div>
                                 </div>
                             </div>
                             <div class="deviceRow deviceRow2">
-                                <div id="button4" class="deviceButton" onclick="onBigButtonClick(event)">
+                                <div id="button4" class="deviceButton" onclick="onBigButtonClick(event)" onmousedown="onBigButtonMouseDown(event)" onmouseup="onBigButtonMouseUp(event)" onmouseout="onBigButtonMouseOut(event)">
                                     <div class="buttonInfo" draggable="true">
-                                        <h2>Cow moo</h2>
+                                        <h2>Loading...</h2>
                                         <div class="dragArea"></div>
                                     </div>
                                 </div>
-                                <div id="button5" class="deviceButton" onclick="onBigButtonClick(event)">
+                                <div id="button5" class="deviceButton" onclick="onBigButtonClick(event)" onmousedown="onBigButtonMouseDown(event)" onmouseup="onBigButtonMouseUp(event)" onmouseout="onBigButtonMouseOut(event)">
                                     <div class="buttonInfo" draggable="true">
-                                        <h2>Cricket chirp</h2>
+                                        <h2>Loading...</h2>
                                         <div class="dragArea"></div>
                                     </div>
                                 </div>
-                                <div id="button6" class="deviceButton" onclick="onBigButtonClick(event)">
+                                <div id="button6" class="deviceButton" onclick="onBigButtonClick(event)" onmousedown="onBigButtonMouseDown(event)" onmouseup="onBigButtonMouseUp(event)" onmouseout="onBigButtonMouseOut(event)">
                                     <div class="buttonInfo" draggable="true">
-                                        <h2>Owl screech</h2>
+                                        <h2>Loading...</h2>
                                         <div class="dragArea"></div>
                                     </div>
                                 </div>
@@ -223,13 +236,13 @@
         <!-- context menu -->
         <!--+++++++++++++-->
         <div id="setContextMenu" class="contextMenu">
-            <button class="contextMenuItem" onclick="deleteSetByLi(elementJustRightClicked)"><h2>Delete Set</h2></button>
+            <button class="contextMenuItem" onclick="onDeleteSetClick(event)"><h2>Delete Set</h2></button>
         </div>
         <div id="audioContextMenu" class="contextMenu">
-            <button class="contextMenuItem" onclick="deleteLibraryAudioByLi(elementJustRightClicked)"><h2>Delete Audio</h2></button>
+            <button class="contextMenuItem" onclick="onDeleteLibraryItemClick(event)"><h2>Delete Audio</h2></button>
         </div>
         <div id="favoriteContextMenu" class="contextMenu">
-            <button class="contextMenuItem" onclick="deleteFavoriteSetByLi(elementJustRightClicked)"><h2>Delete Favorite</h2></button>
+            <button class="contextMenuItem" onclick="onDeleteFavoriteClick(event)"><h2>Remove from Favorites</h2></button>
         </div>
         <div id="buttonContextMenu" class="contextMenu">
             <button class="contextMenuItem" onclick="emptyButtonByDiv(elementJustRightClicked)"><h2>Empty Button</h2></button>
@@ -238,8 +251,18 @@
         <!-- modals -->
         <!--++++++++-->
         <img id="notAllowedCursorImg" src="img/not-allowed.svg" style="display: none">
+        <dialog id="deleteAreYouSure"><!-- about -->
+            <div onclick="event.stopPropagation()">
+                <button class="closeDialogPopup" onclick="this.parentElement.parentElement.style.display='none';"></button>
+                <p>Are you sure you want to delete <span id="deleteName">Thing Name</span>?</p>
+                <div class="two-buttons">
+                    <button id="confirmDeleteButton" class="contextMenuItem" onclick="confirmDelete(event)"><h2>Delete</h2></button>
+                    <button id="cancelDeleteButton" class="contextMenuItem" onclick="cancelDelete(event)"><h2>Cancel</h2></button>
+                </div>
+            </div>
+        </dialog>
         <dialog id="aboutInfoContainer"><!-- about -->
-            <div>
+            <div onclick="event.stopPropagation()">
                 <button class="closeDialogPopup" onclick="this.parentElement.parentElement.style.display='none';"></button>
                 <p>SFX-6 Button Assignment Tool</p>
                 <p>A Practical Nonsense LLC Product</p>
@@ -248,7 +271,7 @@
             </div>
         </dialog>
         <dialog id="libraryInstructions"><!-- library help -->
-            <div>
+            <div onclick="event.stopPropagation()">
                 <button class="closeDialogPopup" onclick="this.parentElement.parentElement.style.display='none';"></button>
                 <p>
                     To add new SFXs, click the "Upload" (<img src="img/music--add.svg" alt="&uarr;">) button.
@@ -258,7 +281,7 @@
             </div>
         </dialog>
         <dialog id="setsInstructions"><!-- sets help -->
-            <div>
+            <div onclick="event.stopPropagation()">
                 <button class="closeDialogPopup" onclick="this.parentElement.parentElement.style.display='none';"></button>
                 <p>
                     Sets are groups of up to 6 SFX.
@@ -274,7 +297,7 @@
             </div>
         </dialog>
         <dialog id="favoritesInstructions"><!-- favorites help -->
-            <div>
+            <div onclick="event.stopPropagation()">
                 <button class="closeDialogPopup" onclick="this.parentElement.parentElement.style.display='none';"></button>
                 <p>
                     Add up to 6 sets to your "Favorites" list by dragging them from "Saved Sets" into this list.
@@ -286,7 +309,7 @@
             </div>
         </dialog>
         <dialog id="editorInstructions"><!-- editor help -->
-            <div>
+            <div onclick="event.stopPropagation()">
                 <button class="closeDialogPopup" onclick="this.parentElement.parentElement.style.display='none';"></button>
                 <p>
                     Assign an SFX to a button by dragging it from your "Library" and dropping it into the desired button below.

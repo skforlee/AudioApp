@@ -1,6 +1,8 @@
 let elementJustRightClicked = null
-function onRightClickContextMenu(element, contextMenuId) {
+function onRightClickContextMenu(element, contextMenuId, condition) {
     element.addEventListener('contextmenu', evt => {
+        if (condition != null && condition() == false)
+            return
         hideAllContextMenus()
         elementJustRightClicked = element
         showContextMenu(contextMenuId, evt)

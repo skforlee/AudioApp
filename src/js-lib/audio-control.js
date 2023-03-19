@@ -1,5 +1,5 @@
 
-let currentVolume = 1.0
+let currentVolume = parseFloat(query('#volume-control').value)
 let allAudiosBeingPlayed = []
 
 
@@ -7,8 +7,8 @@ function onAudioEnd(audioBeingPlayed) {
     allAudiosBeingPlayed = allAudiosBeingPlayed.filter(a => a.audio.currentTime > 0)
 }
 function playAudioFromLibrary(audioName, callbackOnEnd) {
-    const audioPath = NodeCB.getLibraryAudioPath(audioName)
-    const audio = new Audio(audioPath)
+    const audio = NodeCB.createAudio(audioName)
+    console.log({audio})
     const audioBeingPlayed = {
         audioName: audioName,
         audio: audio
