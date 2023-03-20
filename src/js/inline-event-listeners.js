@@ -21,22 +21,35 @@ function onUploadSFXClick(evt) {
 
 }
 
+function getBigButonParent(eventTarget) {
+    console.log(eventTarget)
+    while (eventTarget.classList.contains('deviceButton') == false) {
+        eventTarget = eventTarget.parentNode
+    }
+    return eventTarget
+}
+// Also, take note that there is another event listener on buttons that removes deviceButton--active when dragging the name!
 function onBigButtonMouseDown(evt) {
-    if (evt.buttons != 1) return    // Left click only
-    evt.target.classList.add('deviceButton--active')
+    if (evt.buttons != 1) return                       // Left click only
+    const button = getBigButonParent(evt.target)       // Click event might trigger on a child; we play the animation on the big button, not on the h2 or some other element
+    console.log({button})
+    console.log('A')
+    button.classList.add('deviceButton--active')
 }
 function onBigButtonMouseUp(evt) {
-    evt.target.classList.remove('deviceButton--active')
+    console.log('O')
+    const button = getBigButonParent(evt.target)
+    button.classList.remove('deviceButton--active')
 }
 function onBigButtonMouseOut(evt) {
+    if (evt.target.classList.contains('deviceButton') == false) return  // Only allow on exiting the real big button
     evt.target.classList.remove('deviceButton--active')
 }
 function onBigButtonClick(evt) {
-    const button = evt.target
+    const button = getBigButonParent(evt.target)
     const audioName = button.querySelector('h2').innerText
     if (audioName == '[Empty]')
         return
-    console.log('YEEE')
     stopAudio(audioName)
     playAudioFromLibrary(audioName)
 }
@@ -178,7 +191,7 @@ function closeAllDialogs() {
 
 
 
-const getLibraryLiInputValue = (li) => li.children[1].value
+const getLibraryLiInputValue = (li) => li.children[1].value.toLowerCase()
 function sortLibraryAZ() {
     const ul = query('#libraryItems')
     sortChildren(ul, (a, b) => {
@@ -207,7 +220,7 @@ function sortLibraryOldest() {
 }
 
 
-const getSetLiName = li => li.children[0].children[0].children[1].innerText
+const getSetLiName = li => li.children[0].children[0].children[1].innerText.toLowerCase()
 function sortSetsAZ() {
     const ul = query('#setsList')
     sortChildren(ul, (a, b) => {
@@ -253,9 +266,6 @@ function clearAfferentSearchInput(evt) {
     input.oninput()
 }
 
-
-
-// deleteSetByLi(elementJustRightClicked)
 
 let thingToDeleteType = null
 function onDeleteSetClick(evt) {

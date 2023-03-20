@@ -44,7 +44,31 @@ function deleteLibraryAudioByLi(li) {
     makeSetActive(getCurrentlyActiveSetName())
 
 }
-function renameLibraryAudioFromLi(li, oldFileName, newFileName) {
+
+// Used in the dom-creation-functions function
+function fixNewAudioName(newAudioName) {
+    const allAudioNames = NodeCB.getAllLibraryAudioNames()
+    console.log({allAudioNames})
+    const thisNameExists = (name) => allAudioNames.some(anAudioName => anAudioName == name)
+    if (thisNameExists(newAudioName) == false) {    // set name does not exist
+        return newAudioName
+    }
+    let setCopyIndex = 1
+    const baseName = removeExtension(newAudioName)
+    const extension = getExtension(newAudioName)
+    let finalName
+    do {
+        finalName = baseName + ' (' + setCopyIndex + ')' + '.' + extension
+        setCopyIndex += 1
+    } while (thisNameExists(finalName))
+
+    return finalName
+}
+
+function renameLibraryAudioFromLi(li, oldFileName, newFileNameFixedNoDuplicate) {
+
+    const newFileName = newFileNameFixedNoDuplicate
+
     // Rename the file library folder
     console.log('- Renaming library audio file...')
     NodeCB.renameLibraryAudioFile(oldFileName, newFileName)
@@ -52,8 +76,11 @@ function renameLibraryAudioFromLi(li, oldFileName, newFileName) {
     console.log('- In sets folders....')
     // Rename the file in saved sets folders
     for (const savedSetData of NodeCB.getAllSavedSetsWithAudiosData()) {
-        if (savedSetData.audioNames.includes(oldFileName) != -1) {
+        console.log(savedSetData.audioNames.includes(oldFileName))
+        if (savedSetData.audioNames.includes(oldFileName)) {
             const audioIndex = savedSetData.audioNames.indexOf(oldFileName)
+            if (audioIndex == -1)
+                continue  // Somehow it used to happen... this should never happen, but better be safe than sorry
             NodeCB.retargetAudioShortcutInSetFolder(savedSetData.setName, audioIndex, newFileName)
         }
     }
@@ -443,7 +470,6 @@ function tryShowFullFavoritesIndicator() {
         query('#favoritesNotAllowedOverlay').style.display = ''
 }
 function tryHideFullFavoritesIndicator() {
-    console.log('$$$$$$$$$$$')
     query('#favoritesNotAllowedOverlay').style.display = 'none'
 }
 function tryColorFavoritesSet() {

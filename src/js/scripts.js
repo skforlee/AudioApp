@@ -39,6 +39,11 @@ function setupButtonSwapping() {
         
         onElementDraggedToQueryAll(smallButton, '.deviceButton', (deviceButton) => {
             swapButtons(smallButton, deviceButton.querySelector('.buttonInfo'))
+        }, {
+            onDragStart: function(evt) {
+                const bigButton = getBigButonParent(evt.target)
+                bigButton.classList.remove('deviceButton--active')
+            }
         })
     })
 }
@@ -97,12 +102,15 @@ function _resetFavoriteDragDropAnimation() {
 }
 function setupEachFavoriteDropOverAnimation() {
     const favoriteLis = queryAll('#favoritesListSets li')
-    console.log({favoriteLis})
     for (const favoriteLi of favoriteLis) {
-        console.log('At dis')
-        
+        // I don't remember what the point of this function was, unfortunately
+        // Perhaps a task I already completed.
+        // I will leave the code here, just in case
     }
 }
+
+// This function is not used anymore; it used to be used in a previous version
+// Keeping it in case we need to revert this behavior
 function setupFavoritesDropOverAnimation() {
     
     markAsCustomDragDropReceiver(query('#favoritesListSets'), {
@@ -117,11 +125,9 @@ function setupFavoritesDropOverAnimation() {
             emptyFav.querySelector('h2').innerText = currentSetName
         },
         onDragLeave: function() {
-            console.log('Lefto')
             _resetFavoriteDragDropAnimation()
         },
         onDrop: function() {
-            console.log('Lefta')
             _resetFavoriteDragDropAnimation()
         }
     })

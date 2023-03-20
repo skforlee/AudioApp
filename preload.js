@@ -98,6 +98,8 @@ function renameSavedSetFolder(setName, newName) {
     const newSetPath = join(SAVED_SETS_FOLDER_PATH, newName)
     fs.renameSync(setPath, newSetPath)
 }
+
+let __rmType = 'absolute-sync'
 function deleteSavedSetFolder(setName) {
     console.log(`NodeCB: Deleting set folder for set ${setName}`)
     const setPath = join(SAVED_SETS_FOLDER_PATH, setName)
@@ -105,12 +107,39 @@ function deleteSavedSetFolder(setName) {
     const absolutePath = resolve(setPath)
     console.log(`NodeCB: Found absolute path "${absolutePath}"`)
     
+    console.log(`NodeCB: Deleting with method ${__rmType}`)
     try {
-        fs.rmSync(absolutePath, { recursive: true, force: true })
+        switch (__rmType) {
+            case 'absolute-sync':
+                fs.rmSync(absolutePath, { recursive: true, force: true })
+                break
+            case 'absolute-async':
+                fs.rm(absolutePath, { recursive: true, force: true }, (e) => {
+                    console.log(`NodeCB: absolute-async result:`)
+                    console.log(e)
+                })
+                break
+            case 'relative-sync':
+                fs.rmSync(setPath, { recursive: true, force: true })
+                break
+            case 'relative-async':
+                fs.rm(setPath, { recursive: true, force: true }, (e) => {
+                    console.log(`NodeCB: relative-async result:`)
+                    console.log(e)
+                })
+                break
+            default:
+                console.log(`Method ${__rmType} unknown.`)
+                console.log(`Use absolute-sync, absolute-async, relative-sync or relative-async`)
+        }
     } catch (e) {
         console.log(`NodeCB: ERROR`)
         console.log(e)
     }
+    
+}
+function changeDeleteSetMethod(type) {
+    __rmType = type
 }
 function getFirstAvailableSetName() {                           // Returns a 'random' set name (for new sets)
     const baseSetPath = join(SAVED_SETS_FOLDER_PATH, 'Untitled Set ')
@@ -333,6 +362,7 @@ contextBridge.exposeInMainWorld('NodeCB', {
     getAllFilesInFolderNameKeyTimestampValue,
 
 
+    changeDeleteSetMethod,
     initFolders,
     getOriginalAudioShortcutNameFromSavedSet,
     openExternalLink,

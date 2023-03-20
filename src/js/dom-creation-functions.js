@@ -36,7 +36,7 @@ function createLibraryItemDom({ name }) {
         input.readOnly = true
         const oldName = element.getAttribute('data-old-input-value')
         const extension = getExtension(oldName)
-        const newName = input.value + '.' + extension
+        const newName = fixNewAudioName(input.value + '.' + extension)
         renameLibraryAudioFromLi(element, oldName, newName)
         input.value = newName
     })
@@ -228,14 +228,41 @@ function createFavoriteSetItem({ name, isEmpty }) {
 
 
 // Utils
+const soundsAndButtonsBeingUsed = {
+
+}
 function onClickOnPlayButtonForAudio(button, audioFileName) {
-    if (button.classList.contains('sfxPlay--pause') == false) {
-        button.classList.add('sfxPlay--pause')
+    const allSpecificButtons = getAllButtonsWithThatAudio(audioFileName)
+    stopAudio(audioFileName)
+    const anyButton = allSpecificButtons[0]
+    const isButtonReadyToPlay = anyButton.classList.contains('sfxPlay--pause') == false
+
+    if (isButtonReadyToPlay) {
+        for (const button of allSpecificButtons) {
+            button.classList.add('sfxPlay--pause')
+        }
         playAudioFromLibrary(audioFileName, () => {
-            button.classList.remove('sfxPlay--pause')
+            for (const button of allSpecificButtons) {
+                button.classList.remove('sfxPlay--pause')
+            }
         })
     } else {
-        stopAudio(audioFileName)
-        button.classList.remove('sfxPlay--pause')
+        for (const button of allSpecificButtons) {
+            button.classList.remove('sfxPlay--pause')
+        }
     }
+}
+
+
+function getAllButtonsWithThatAudio(audioName) {
+    const libAudioButtons = queryAll('#libraryItems li input')
+        .filter(input => input.value == audioName)
+        .map(input => input.parentNode.querySelector('button'))
+    let buttons = libAudioButtons.length > 0 ? [libAudioButtons[0]] : []
+    const setAudioButtons = queryAll('.setListSfxs li h2')
+        .filter(h2 => h2.innerText == audioName)
+        .map(h2 => h2.parentNode.querySelector('button'))
+    if (setAudioButtons.length > 0)
+        buttons = [...buttons, ...setAudioButtons]
+    return buttons
 }
