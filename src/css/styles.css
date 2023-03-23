@@ -981,8 +981,6 @@ dialog img {
     position: relative;
     height: 50cqh;
     width: 100%;
-    margin-left: 8px;
-    margin-top: -8px;
     border-radius: 4px;
 }
 .deviceEditor::after {
