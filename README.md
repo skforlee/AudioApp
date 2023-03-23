@@ -55,6 +55,8 @@ There are 3 main types of elements in the app:
 # App Code Explained
 There is no back-end server. The app is self-contained.
 There is no HTTP communication with anything.
+No framework is used - it's purely HTML/CSS/JS.
+Ocasionally, you will see `query` and `queryAll` - these are just shorthands for `document.querySelector` and `document.querySelectorAll`.
 
 All library items, sets and favorites in the DOM (HTML elements) are created using JavaScript.
 Their creation funtions are in `js/dom-creation-functions.js`:
@@ -78,4 +80,7 @@ If your issue is related to something else (e.g. the 6 big buttons), see `index.
 Exporting to another OS should be faily simple with Electron.
 However, some things might have to be changed, like how shortcuts work.
 At the moment, some things are hardcoded to read ".lnk" files, which works on Windows but will probably not work on other OS's. Might be worth doing a Ctrl+F for ".lnk" and changing that with an OS appropriate file extension.
+## Optimizing App's Speed
+File reading/writing takes a lot of time, especially when made with sync functions.
+It might be worth using async functions for some file read/write operations in `preload.js` (e.g. `fs.writeFile` instead of `fs.writeFileSync`).
 
