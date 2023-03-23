@@ -1,4 +1,17 @@
 
+function onSetNameInputClick(evt) {
+    const input = evt.target
+    input.setAttribute('data-old-value', input.value)
+    input.select()
+}
+function onSetNameInputChange(evt) {
+    const input = evt.target
+    if (input.value.trim().length == 0) {
+        input.value = input.getAttribute('data-old-value')
+        return
+    }
+    renameSet(input.value)
+}
 
 function onUploadSFXInputChange(evt) {
     const input = evt.target
