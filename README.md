@@ -72,3 +72,10 @@ All initialization functions are handled in `scripts.js` (works like a main func
 
 If you ever need to find a bug, you can start at one of the 3 element creation functions I talked about above and go through the code.
 If your issue is related to something else (e.g. the 6 big buttons), see `index.html` or `scripts.js`.
+
+# Future Features
+## Exporting to Mac/Linux
+Exporting to another OS should be faily simple with Electron.
+However, some things might have to be changed, like how shortcuts work.
+At the moment, some things are hardcoded to read ".lnk" files, which works on Windows but will probably not work on other OS's. Might be worth doing a Ctrl+F for ".lnk" and changing that with an OS appropriate file extension.
+
