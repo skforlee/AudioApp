@@ -162,26 +162,3 @@ document.addEventListener('DOMContentLoaded', () => {
     makeSetActive(getAnySetName())
 })
 
-
-
-
-
-
-
-
-
-
-
-
-// window.onclick = function(event) {
-//     if (!event.target.matches('.sortButton')) {
-//         var dropdowns = document.getElementsByClassName("sortOptions");
-//         var i;
-//         for (i = 0; i < dropdowns.length; i++) {
-//             var openDropdown = dropdowns[i];
-//             if (openDropdown.classList.contains('showHideSort')) {
-//                 openDropdown.classList.remove('showHideSort');
-//             }
-//         }
-//     }
-// }

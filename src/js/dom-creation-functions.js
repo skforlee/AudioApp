@@ -33,8 +33,12 @@ function createLibraryItemDom({ name }) {
     })
     element.querySelector('input').addEventListener('change', (evt) => {
         const input = element.querySelector('input')
-        input.readOnly = true
         const oldName = element.getAttribute('data-old-input-value')
+        input.readOnly = true
+        if (input.value.trim().length == 0) {
+            input.value = oldName
+            return
+        }
         const extension = getExtension(oldName)
         const newName = fixNewAudioName(input.value + '.' + extension)
         renameLibraryAudioFromLi(element, oldName, newName)
@@ -228,9 +232,6 @@ function createFavoriteSetItem({ name, isEmpty }) {
 
 
 // Utils
-const soundsAndButtonsBeingUsed = {
-
-}
 function onClickOnPlayButtonForAudio(button, audioFileName) {
     const allSpecificButtons = getAllButtonsWithThatAudio(audioFileName)
     stopAudio(audioFileName)
