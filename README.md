@@ -8,7 +8,7 @@ SFX-6 is just a web app (website) exported to desktop using Electron.
 
 ## Setup
 To start working on the project, follow these steps:
-1. Download the source code from this link: https://github.com/daverave1212/AudioApp
+1. Download the source code from this link: https://github.com/skforlee/AudioApp
     - Click on the green button [< > Code] and click "Download ZIP"
     - Extract the zip wherever you have access to delete/write files
 2. Install Node.js by going to this link: https://nodejs.org/en
