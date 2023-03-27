@@ -1,325 +1,603 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <link href="css/styles.css" rel="stylesheet" type="text/css">
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <head>
+    <link href="css/styles.css" rel="stylesheet" type="text/css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Space+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link href="css/moreStyles.css" rel="stylesheet" type="text/css" />
 
-        <script
-            src="https://code.jquery.com/jquery-3.6.3.js"
-            integrity="sha256-nQLuAZGRRcILA+6dMBOvcRh5Pe310sBpanc6+QBmyVM="
-            crossorigin="anonymous"></script>
-        <script defer src="js-lib/utils.js"></script>
-        <script defer src="js-lib/sortable.js"></script>
-        <script defer src="js-lib/custom-dragging-events.js"></script>
-        <script defer src="js-lib/audio-control.js"></script>
-        <script defer src="js-lib/context-menus.js"></script>
+    <script
+      src="https://code.jquery.com/jquery-3.6.3.js"
+      integrity="sha256-nQLuAZGRRcILA+6dMBOvcRh5Pe310sBpanc6+QBmyVM="
+      crossorigin="anonymous"
+    ></script>
+    <script defer src="js-lib/utils.js"></script>
+    <script defer src="js-lib/sortable.js"></script>
+    <script defer src="js-lib/custom-dragging-events.js"></script>
+    <script defer src="js-lib/audio-control.js"></script>
+    <script defer src="js-lib/context-menus.js"></script>
 
-        <script defer src="js/app-specific-utils.js"></script>
-        <script defer src="js/drag-and-drop-sorting.js"></script>
-        <script defer src="js/dom-creation-functions.js"></script>
-        <script defer src="js/inline-event-listeners.js"></script>
-        <script defer src="js/scripts.js"></script>
-    </head>
-    <body>
-        <!--++++++-->
-        <!-- menu -->
-        <!--++++++-->
-        <header>
-            <!-- menu items -->
-            <nav id="menuBar">
-                <ul id="menuBarItems">
-                    <!-- file -->
-                    <li id="file" class="menuBarItem">
-                        <h2 onclick="toggleFileMenu(event)">File</h2>
-                        <ul id="menuBarFileDropdown" class="menuItemContent">
-                            <li id="uploadSfxOption" class="menuBarDropdown"><h2 onclick="query('#upload input').click()">Upload SFX</h2></li>
-                            <li id="createSetOption" class="menuBarDropdown"><h2 onclick="onNewSetClick(event)">New Set</h2></li>
-                            <li id="refreshOption" class="menuBarDropdown"><h2 onclick="loadLibraryAudios()">Refresh Library</h2></li>
-                            <li id="exitOption" class="menuBarDropdown"><h2 onclick="NodeCB.quit()">Exit</h2></li>
-                        </ul>
-                    </li>
-                    <!-- help -->
-                    <li id="help" class="menuBarItem">
-                        <h2 onclick="toggleHelpMenu(event)">Help</h2>
-                        <ul id="menuBarHelpDropdown" class="menuItemContent">
-                            <!-- <li id="instructionsOption" class="menuBarDropdown"><a href="https://sfx-6.com/instructions/" target="_blank">How to use</a></li> -->
-                            <li id="instructionsOption" class="menuBarDropdown"><a href="#" onclick="NodeCB.openExternalLink('https://sfx-6.com/instructions/')">How to use</a></li>
-                            <li id="aboutOption" class="menuBarDropdown"><h2 onclick="openDialog('aboutInfoContainer', event)">About</h2></li>
-                            <li id="aboutOption" class="menuBarDropdown"><h2 onclick="NodeCB.openDevConsole()">Open Dev Tools</h2></li>
-                        </ul>
-                    </li>
-                </ul>
-            </nav>
+    <script defer src="js/app-specific-utils.js"></script>
+    <script defer src="js/drag-and-drop-sorting.js"></script>
+    <script defer src="js/dom-creation-functions.js"></script>
+    <script defer src="js/inline-event-listeners.js"></script>
+    <script defer src="js/scripts.js"></script>
+  </head>
+  <body>
+    <!--++++++-->
+    <!-- menu -->
+    <!--++++++-->
+    <header>
+      <!-- menu items -->
+      <nav id="menuBar">
+        <ul id="menuBarItems">
+          <!-- file -->
+          <li id="file" class="menuBarItem">
+            <h2 onclick="toggleFileMenu(event)">File</h2>
+            <ul id="menuBarFileDropdown" class="menuItemContent">
+              <li id="uploadSfxOption" class="menuBarDropdown">
+                <h2 onclick="query('#upload input').click()">Upload SFX</h2>
+              </li>
+              <li id="createSetOption" class="menuBarDropdown">
+                <h2 onclick="onNewSetClick(event)">New Set</h2>
+              </li>
+              <li id="refreshOption" class="menuBarDropdown">
+                <h2 onclick="loadLibraryAudios()">Refresh Library</h2>
+              </li>
+              <li id="exitOption" class="menuBarDropdown">
+                <h2 onclick="NodeCB.quit()">Exit</h2>
+              </li>
+            </ul>
+          </li>
+          <!-- help -->
+          <li id="help" class="menuBarItem">
+            <h2 onclick="toggleHelpMenu(event)">Help</h2>
+            <ul id="menuBarHelpDropdown" class="menuItemContent">
+              <!-- <li id="instructionsOption" class="menuBarDropdown"><a href="https://sfx-6.com/instructions/" target="_blank">How to use</a></li> -->
+              <li id="instructionsOption" class="menuBarDropdown">
+                <a
+                  href="#"
+                  onclick="NodeCB.openExternalLink('https://sfx-6.com/instructions/')"
+                  >How to use</a
+                >
+              </li>
+              <li id="aboutOption" class="menuBarDropdown">
+                <h2 onclick="openDialog('aboutInfoContainer', event)">About</h2>
+              </li>
+              <li id="aboutOption" class="menuBarDropdown">
+                <h2 onclick="NodeCB.openDevConsole()">Open Dev Tools</h2>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
 
+      <!-- title -->
+      <div id="softwareTitle"><h1>SFX-6 Button Assignment Tool</h1></div>
+
+      <!-- volume control -->
+      <div id="volume-control-container">
+        <img src="img/volume.svg" />
+        <input
+          id="volume-control"
+          type="range"
+          min="0"
+          max="1"
+          step="0.01"
+          value="0.5"
+          onchange="changeVolume(event.target.value)"
+          oninput="changeVolume(event.target.value)"
+        />
+      </div>
+    </header>
+    <!--++++++-->
+    <!-- main -->
+    <!--++++++-->
+    <main>
+      <!-- column 1 -->
+      <div id="col1" class="column">
+        <!--library-->
+        <section id="sfxLibrary">
+          <div class="sectionTitle">
+            <button
+              class="showDialog"
+              title="Help"
+              onclick="openDialog('libraryInstructions', event)"
+            ></button>
+            <h1>Library (<span id="numberOfItemsLibrary">0</span>)</h1>
+          </div>
+          <div class="toolbar">
+            <div class="searchContainer">
+              <input
+                id="searchSFX"
+                type="text"
+                placeholder="Search"
+                oninput="onLibrarySearchChange(this.value)"
+              />
+              <button
+                class="clearSearchButton hidden"
+                onclick="clearAfferentSearchInput(event)"
+              ></button>
+            </div>
+            <div id="upload" title="Upload SFX">
+              <input
+                type="file"
+                accept=".wav,.mp3"
+                multiple
+                onchange="onUploadSFXInputChange(event)"
+              />
+              <h2>Upload</h2>
+            </div>
+            <button
+              id="sort-sfx"
+              class="sortButton"
+              title="Sort"
+              onclick="showHideSortLib(event)"
+            ></button>
+            <div class="sortOptions">
+              <button class="sortByNewest" onclick="sortLibraryNewest()">
+                <h2>Newest</h2>
+              </button>
+              <button class="sortByOldest" onclick="sortLibraryOldest()">
+                <h2>Oldest</h2>
+              </button>
+              <button class="sortAtoZ" onclick="sortLibraryAZ()">
+                <h2>A-Z</h2>
+              </button>
+              <button class="sortZtoA" onclick="sortLibraryZA()">
+                <h2>Z-A</h2>
+              </button>
+            </div>
+          </div>
+          <ul id="libraryItems">
+            <!-- Populated with JS -->
+          </ul>
+
+          <div id="contextMenu" class="context-menu" style="display: none">
+            <ul class="menu">
+              <li class="share">
+                <a href="#"
+                  ><i class="fa fa-share" aria-hidden="true"></i> Share</a
+                >
+              </li>
+              <li class="rename">
+                <a href="#"
+                  ><i class="fa fa-pencil" aria-hidden="true"></i> Rename</a
+                >
+              </li>
+              <li class="link">
+                <a href="#"
+                  ><i class="fa fa-link" aria-hidden="true"></i> Copy Link
+                  Address</a
+                >
+              </li>
+              <li class="copy">
+                <a href="#"
+                  ><i class="fa fa-copy" aria-hidden="true"></i> Copy to</a
+                >
+              </li>
+              <li class="paste">
+                <a href="#"
+                  ><i class="fa fa-paste" aria-hidden="true"></i> Move to</a
+                >
+              </li>
+              <li class="download">
+                <a href="#"
+                  ><i class="fa fa-download" aria-hidden="true"></i> Download</a
+                >
+              </li>
+              <li class="trash">
+                <a href="#"
+                  ><i class="fa fa-trash" aria-hidden="true"></i> Delete</a
+                >
+              </li>
+            </ul>
+          </div>
+        </section>
+      </div>
+
+      <!-- column 2 -->
+      <div id="col2" class="column">
+        <!-- sets -->
+        <section id="savedSets">
+          <!-- sets title -->
+          <div class="sectionTitle">
+            <button
+              id=""
+              class="showDialog"
+              title="Help"
+              onclick="openDialog('setsInstructions', event)"
+            ></button>
+            <h1>Saved Sets (<span id="numberOfItemsSets">6</span>)</h1>
+          </div>
+          <!-- sets toolbar -->
+          <div class="toolbar">
+            <label for="search-sets"></label>
+            <div class="searchContainer">
+              <input
+                id="search-sets"
+                class="search"
+                type="text"
+                placeholder="Search"
+                oninput="onSetsSearchChange(this.value)"
+              />
+              <button
+                class="clearSearchButton hidden"
+                onclick="clearAfferentSearchInput(event)"
+              ></button>
+            </div>
+            <button id="newSet" title="New set" onclick="onNewSetClick()">
+              <h2>New set</h2>
+            </button>
+            <button
+              id="sort-sets"
+              class="sortButton"
+              title="Sort"
+              onclick="showHideSortSets(event)"
+            ></button>
+            <div class="sortOptions">
+              <button class="sortByNewest" onclick="sortSetsNewest()">
+                <h2>Newest</h2>
+              </button>
+              <button class="sortByOldest" onclick="sortSetsOldest()">
+                <h2>Oldest</h2>
+              </button>
+              <button class="sortAtoZ" onclick="sortSetsAZ()">
+                <h2>A-Z</h2>
+              </button>
+              <button class="sortZtoA" onclick="sortSetsZA()">
+                <h2>Z-A</h2>
+              </button>
+            </div>
+          </div>
+          <!-- sets list -->
+          <ul id="setsList" class="savedSetsSetList">
+            <!-- Populated via JS; see js/dom-creation-functions.js -->
+          </ul>
+        </section>
+
+        <!-- favorites -->
+        <section id="favorites">
+          <!--favorites titlebar-->
+          <div class="sectionTitle">
+            <button
+              id=""
+              class="showDialog"
+              title="Help"
+              onclick="openDialog('favoritesInstructions', event)"
+            ></button>
+            <h1>Favorites</h1>
+          </div>
+          <!--favorites list-->
+          <div id="favoritesList">
+            <div id="favoritesNotAllowedOverlay" style="display: none">
+              <div class="centerer">
+                <h1>
+                  Only 5 favorite sets are allowed. Right-click to remove a
+                  favorite set.
+                </h1>
+              </div>
+            </div>
+            <ul class="listIndex">
+              <li><img src="img/number--small--1.svg" /></li>
+              <li><img src="img/number--small--2.svg" /></li>
+              <li><img src="img/number--small--3.svg" /></li>
+              <li><img src="img/number--small--4.svg" /></li>
+              <li><img src="img/number--small--5.svg" /></li>
+              <!-- <li><img src="img/number--small--6.svg" /></li> -->
+            </ul>
+            <ul id="favoritesListSets">
+              <!-- Populated via JS; see js/dom-creation-functions.js -->
+            </ul>
+          </div>
+        </section>
+      </div>
+
+      <!-- column 3 -->
+      <div id="col3">
+        <!-- editor -->
+        <section id="setEditor">
+          <div class="sectionTitle">
             <!-- title -->
-            <div id="softwareTitle"><h1>SFX-6 Button Assignment Tool</h1></div>
-
-            <!-- volume control -->
-            <div id="volume-control-container">
-                <img src="img/volume.svg">
-                <input id="volume-control" type="range" min="0" max="1" step="0.01" value="0.5" onchange="changeVolume(event.target.value)" oninput="changeVolume(event.target.value)">
+            <button
+              id=""
+              class="showDialog"
+              title="Help"
+              onclick="openDialog('editorInstructions', event)"
+            ></button>
+            <h1>Set Editor</h1>
+          </div>
+          <div class="toolbar">
+            <!-- toolbar -->
+            <div class="searchContainer">
+              <input
+                id="setNameInput"
+                type="text"
+                value="Example set 3"
+                onclick="onSetNameInputClick(event)"
+                onchange="onSetNameInputChange(event)"
+              />
             </div>
-        </header>
-        <!--++++++-->
-        <!-- main -->
-        <!--++++++-->
-        <main>
-            <!-- column 1 -->
-            <div id="col1" class="column">
-                <!--library-->
-                <section id="sfxLibrary">
-                    <div class="sectionTitle">
-                        <button class="showDialog" title="Help" onclick="openDialog('libraryInstructions', event)"></button>
-                        <h1>Library (<span id="numberOfItemsLibrary">0</span>)</h1>
-                    </div>
-                    <div class="toolbar">
-                        <div class="searchContainer">
-                            <input id="searchSFX" type="text" placeholder="Search" oninput="onLibrarySearchChange(this.value)">
-                            <button class="clearSearchButton hidden" onclick="clearAfferentSearchInput(event)"></button>
-                        </div>
-                        <div id="upload" title="Upload SFX">
-                            <input type="file" accept=".wav,.mp3" multiple onchange="onUploadSFXInputChange(event)">
-                            <h2>Upload</h2>
-                        </div>
-                        <button id="sort-sfx" class="sortButton" title="Sort" onclick="showHideSortLib(event)"></button>
-                        <div class="sortOptions">
-                            <button class="sortByNewest" onclick="sortLibraryNewest()"><h2>Newest</h2></button>
-                            <button class="sortByOldest" onclick="sortLibraryOldest()"><h2>Oldest</h2></button>
-                            <button class="sortAtoZ" onclick="sortLibraryAZ()"><h2>A-Z</h2></button>
-                            <button class="sortZtoA" onclick="sortLibraryZA()"><h2>Z-A</h2></button>
-                        </div>
-                    </div>
-                    <ul id="libraryItems">
-                        <!-- Populated with JS -->
-                    </ul>
-
-                    <div id="contextMenu" class="context-menu" style="display: none">
-                        <ul class="menu">
-                            <li class="share"><a href="#"><i class="fa fa-share" aria-hidden="true"></i> Share</a></li>
-                            <li class="rename"><a href="#"><i class="fa fa-pencil" aria-hidden="true"></i> Rename</a></li>
-                            <li class="link"><a href="#"><i class="fa fa-link" aria-hidden="true"></i> Copy Link Address</a></li>
-                            <li class="copy"><a href="#"><i class="fa fa-copy" aria-hidden="true"></i> Copy to</a></li>
-                            <li class="paste"><a href="#"><i class="fa fa-paste" aria-hidden="true"></i> Move to</a></li>
-                            <li class="download"><a href="#"><i class="fa fa-download" aria-hidden="true"></i> Download</a></li>
-                            <li class="trash"><a href="#"><i class="fa fa-trash" aria-hidden="true"></i> Delete</a></li>
-                        </ul> 
-                    </div> 
-                </section>
-            </div>
-
-            <!-- column 2 -->
-            <div id="col2" class="column">
-                <!-- sets -->
-                <section id="savedSets">
-                    <!-- sets title -->
-                    <div class="sectionTitle">
-                        <button id="" class="showDialog" title="Help" onclick="openDialog('setsInstructions', event)"></button>
-                        <h1>Saved Sets (<span id="numberOfItemsSets">6</span>)</h1>
-                    </div>
-                    <!-- sets toolbar -->
-                    <div class="toolbar">
-                        <label for="search-sets"></label>
-                        <div class="searchContainer">
-                            <input id="search-sets" class="search" type="text" placeholder="Search" oninput="onSetsSearchChange(this.value)">
-                            <button class="clearSearchButton hidden" onclick="clearAfferentSearchInput(event)"></button>
-                        </div>
-                        <button id="newSet" title="New set" onclick="onNewSetClick()"><h2>New set</h2></button>
-                        <button id="sort-sets" class="sortButton" title="Sort" onclick="showHideSortSets(event)"></button>
-                        <div class="sortOptions">
-                            <button class="sortByNewest" onclick="sortSetsNewest()"><h2>Newest</h2></button>
-                            <button class="sortByOldest" onclick="sortSetsOldest()"><h2>Oldest</h2></button>
-                            <button class="sortAtoZ" onclick="sortSetsAZ()"><h2>A-Z</h2></button>
-                            <button class="sortZtoA" onclick="sortSetsZA()"><h2>Z-A</h2></button>
-                        </div>
-                    </div>
-                    <!-- sets list -->
-                    <ul id="setsList" class="savedSetsSetList">
-                        <!-- Populated via JS; see js/dom-creation-functions.js -->
-                    </ul>
-                </section>
-
-                <!-- favorites -->
-                <section id="favorites">
-                    <!--favorites titlebar-->
-                    <div class="sectionTitle">
-                        <button id="" class="showDialog" title="Help" onclick="openDialog('favoritesInstructions', event)"></button>
-                        <h1>Favorites</h1>
-                    </div>
-                    <!--favorites list-->
-                    <div id="favoritesList">
-                        <div id="favoritesNotAllowedOverlay" style="display: none">
-                            <div class="centerer">
-                                <h1>Only 6 favorite sets are allowed. Right-click to remove a favorite set.</h1>
-                            </div>
-                        </div>
-                        <ul class="listIndex">
-                            <li><img src="img/number--small--1.svg"></li>
-                            <li><img src="img/number--small--2.svg"></li>
-                            <li><img src="img/number--small--3.svg"></li>
-                            <li><img src="img/number--small--4.svg"></li>
-                            <li><img src="img/number--small--5.svg"></li>
-                            <li><img src="img/number--small--6.svg"></li>
-                        </ul>
-                        <ul id="favoritesListSets">
-                            <!-- Populated via JS; see js/dom-creation-functions.js -->
-                        </ul>
-                    </div>
-                </section>
-            </div>
-
-            <!-- column 3 -->
-            <div id="col3">
-                <!-- editor -->
-                <section id="setEditor">
-                    <div class="sectionTitle"> <!-- title -->
-                        <button id="" class="showDialog" title="Help" onclick="openDialog('editorInstructions', event)"></button>
-                        <h1>Set Editor</h1>
-                    </div>
-                    <div class="toolbar"> <!-- toolbar -->
-                        <div class="searchContainer">
-                            <input id="setNameInput" type="text" value="Example set 3" onclick="onSetNameInputClick(event)" onchange="onSetNameInputChange(event)">
-                        </div>
-                    </div>
-                    <div id="" class="deviceContainer">
-                        <div id="" class="deviceEditor">
-                            <div class="deviceRow deviceRow1">
-                                <div id="button1" class="deviceButton" onclick="onBigButtonClick(event)" onmousedown="onBigButtonMouseDown(event)" onmouseup="onBigButtonMouseUp(event)" onmouseout="onBigButtonMouseOut(event)">
-                                    <div class="buttonInfo" draggable="true">
-                                        <h2>Loading...</h2>
-                                        <div class="dragArea"></div>
-                                    </div>
-                                    <!--
+          </div>
+          <div id="" class="deviceContainer">
+            <div id="" class="deviceEditor">
+              <div class="deviceRow deviceRow1">
+                <div
+                  id="button1"
+                  class="deviceButton"
+                  onclick="onBigButtonClick(event)"
+                  onmousedown="onBigButtonMouseDown(event)"
+                  onmouseup="onBigButtonMouseUp(event)"
+                  onmouseout="onBigButtonMouseOut(event)"
+                >
+                  <div class="buttonInfo" draggable="true">
+                    <h2>Loading...</h2>
+                    <div class="dragArea"></div>
+                  </div>
+                  <!--
                                     <button class="deleteSfx"></button>
                                     -->
-                                </div>
-                                <div id="button2" class="deviceButton" onclick="onBigButtonClick(event)" onmousedown="onBigButtonMouseDown(event)" onmouseup="onBigButtonMouseUp(event)" onmouseout="onBigButtonMouseOut(event)">
-                                    <div class="buttonInfo" draggable="true">
-                                        <h2>Loading...</h2>
-                                        <div class="dragArea"></div>
-                                    </div>
-                                </div>
-                                <div id="button3" class="deviceButton" onclick="onBigButtonClick(event)" onmousedown="onBigButtonMouseDown(event)" onmouseup="onBigButtonMouseUp(event)" onmouseout="onBigButtonMouseOut(event)">
-                                    <div class="buttonInfo" draggable="true">
-                                        <h2>Loading...</h2>
-                                        <div class="dragArea"></div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="deviceRow deviceRow2">
-                                <div id="button4" class="deviceButton" onclick="onBigButtonClick(event)" onmousedown="onBigButtonMouseDown(event)" onmouseup="onBigButtonMouseUp(event)" onmouseout="onBigButtonMouseOut(event)">
-                                    <div class="buttonInfo" draggable="true">
-                                        <h2>Loading...</h2>
-                                        <div class="dragArea"></div>
-                                    </div>
-                                </div>
-                                <div id="button5" class="deviceButton" onclick="onBigButtonClick(event)" onmousedown="onBigButtonMouseDown(event)" onmouseup="onBigButtonMouseUp(event)" onmouseout="onBigButtonMouseOut(event)">
-                                    <div class="buttonInfo" draggable="true">
-                                        <h2>Loading...</h2>
-                                        <div class="dragArea"></div>
-                                    </div>
-                                </div>
-                                <div id="button6" class="deviceButton" onclick="onBigButtonClick(event)" onmousedown="onBigButtonMouseDown(event)" onmouseup="onBigButtonMouseUp(event)" onmouseout="onBigButtonMouseOut(event)">
-                                    <div class="buttonInfo" draggable="true">
-                                        <h2>Loading...</h2>
-                                        <div class="dragArea"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-            </div>
-        </main>
-        <!--+++++++++++++-->
-        <!-- context menu -->
-        <!--+++++++++++++-->
-        <div id="setContextMenu" class="contextMenu">
-            <button class="contextMenuItem" onclick="onDeleteSetClick(event)"><h2>Delete Set</h2></button>
-        </div>
-        <div id="audioContextMenu" class="contextMenu">
-            <button class="contextMenuItem" onclick="onDeleteLibraryItemClick(event)"><h2>Delete Audio</h2></button>
-        </div>
-        <div id="favoriteContextMenu" class="contextMenu">
-            <button class="contextMenuItem" onclick="onDeleteFavoriteClick(event)"><h2>Remove from Favorites</h2></button>
-        </div>
-        <div id="buttonContextMenu" class="contextMenu">
-            <button class="contextMenuItem" onclick="emptyButtonByDiv(elementJustRightClicked)"><h2>Empty Button</h2></button>
-        </div>
-        <!--++++++++-->
-        <!-- modals -->
-        <!--++++++++-->
-        <img id="notAllowedCursorImg" src="img/not-allowed.svg" style="display: none">
-        <dialog id="deleteAreYouSure"><!-- about -->
-            <div onclick="event.stopPropagation()">
-                <button class="closeDialogPopup" onclick="this.parentElement.parentElement.style.display='none';"></button>
-                <p>Are you sure you want to delete <span id="deleteName">Thing Name</span>?</p>
-                <div class="two-buttons">
-                    <button id="confirmDeleteButton" class="contextMenuItem" onclick="confirmDelete(event)"><h2>Delete</h2></button>
-                    <button id="cancelDeleteButton" class="contextMenuItem" onclick="cancelDelete(event)"><h2>Cancel</h2></button>
                 </div>
+                <div
+                  id="button2"
+                  class="deviceButton"
+                  onclick="onBigButtonClick(event)"
+                  onmousedown="onBigButtonMouseDown(event)"
+                  onmouseup="onBigButtonMouseUp(event)"
+                  onmouseout="onBigButtonMouseOut(event)"
+                >
+                  <div class="buttonInfo" draggable="true">
+                    <h2>Loading...</h2>
+                    <div class="dragArea"></div>
+                  </div>
+                </div>
+                <div
+                  id="button3"
+                  class="deviceButton"
+                  onclick="onBigButtonClick(event)"
+                  onmousedown="onBigButtonMouseDown(event)"
+                  onmouseup="onBigButtonMouseUp(event)"
+                  onmouseout="onBigButtonMouseOut(event)"
+                >
+                  <div class="buttonInfo" draggable="true">
+                    <h2>Loading...</h2>
+                    <div class="dragArea"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="deviceRow deviceRow2">
+                <div
+                  id="button4"
+                  class="deviceButton"
+                  onclick="onBigButtonClick(event)"
+                  onmousedown="onBigButtonMouseDown(event)"
+                  onmouseup="onBigButtonMouseUp(event)"
+                  onmouseout="onBigButtonMouseOut(event)"
+                >
+                  <div class="buttonInfo" draggable="true">
+                    <h2>Loading...</h2>
+                    <div class="dragArea"></div>
+                  </div>
+                </div>
+                <div
+                  id="button5"
+                  class="deviceButton"
+                  onclick="onBigButtonClick(event)"
+                  onmousedown="onBigButtonMouseDown(event)"
+                  onmouseup="onBigButtonMouseUp(event)"
+                  onmouseout="onBigButtonMouseOut(event)"
+                >
+                  <div class="buttonInfo" draggable="true">
+                    <h2>Loading...</h2>
+                    <div class="dragArea"></div>
+                  </div>
+                </div>
+                <div
+                  id="button6"
+                  class="deviceButton"
+                  onclick="onBigButtonClick(event)"
+                  onmousedown="onBigButtonMouseDown(event)"
+                  onmouseup="onBigButtonMouseUp(event)"
+                  onmouseout="onBigButtonMouseOut(event)"
+                >
+                  <div class="buttonInfo" draggable="true">
+                    <h2>Loading...</h2>
+                    <div class="dragArea"></div>
+                  </div>
+                </div>
+              </div>
             </div>
-        </dialog>
-        <dialog id="aboutInfoContainer"><!-- about -->
-            <div onclick="event.stopPropagation()">
-                <button class="closeDialogPopup" onclick="this.parentElement.parentElement.style.display='none';"></button>
-                <p>SFX-6 Button Assignment Tool</p>
-                <p>A Practical Nonsense LLC Product</p>
-                <p>Version 1.0</p>
-                <p><a href="#" target="_blank" onclick="NodeCB.openExternalLink('https://sfx-6.com/')">www.sfx-6.com</a></p>
-                <p>Designed by <a href="#" target="_blank" onclick="NodeCB.openExternalLink('https://sherwoodforlee.com/')">Sherwood Forlee</a></p>
-                <p>Development by <a href="#" target="_blank" onclick="NodeCB.openExternalLink('https://davedoublee.github.io/')">Dave Doublee</a></p>
-                <p>Development by <a href="#" target="_blank" onclick="NodeCB.openExternalLink('https://')">Khaled Mohamed</a></p>
-            </div>
-        </dialog>
-        <dialog id="libraryInstructions"><!-- library help -->
-            <div onclick="event.stopPropagation()">
-                <button class="closeDialogPopup" onclick="this.parentElement.parentElement.style.display='none';"></button>
-                <p>
-                    To add new SFXs, click the "Upload" (<img src="img/music--add.svg" alt="&uarr;">) button.
-                    <br><br>
-                    To delete SFXs, right click on the SFX and then click "Delete".
-                </p>
-            </div>
-        </dialog>
-        <dialog id="setsInstructions"><!-- sets help -->
-            <div onclick="event.stopPropagation()">
-                <button class="closeDialogPopup" onclick="this.parentElement.parentElement.style.display='none';"></button>
-                <p>
-                    Sets are groups of up to 6 SFX.
-                    <br><br>
-                    To create a set, click the "New Set" (<img src="img/folder--add.svg">) button.
-                    <br><br>
-                    To edit a set, click on the set name; it will appear in the "Set Editor".
-                    <br><br>
-                    To delete a set, right click on the set and then click "Delete".
-                    <br><br>
-                    Starred sets (<img src="img/star--filled.svg">) are part of your "Favorites".
-                </p>
-            </div>
-        </dialog>
-        <dialog id="favoritesInstructions"><!-- favorites help -->
-            <div onclick="event.stopPropagation()">
-                <button class="closeDialogPopup" onclick="this.parentElement.parentElement.style.display='none';"></button>
-                <p>
-                    Add up to 6 sets to your "Favorites" list by dragging them from "Saved Sets" into this list.
-                    <br><br>
-                    Each set in your "Favorites" list corresponds to a button on your SFX-6. To activate a set, long press on the respective button for 2 seconds.
-                    <br><br>
-                    Rearrange your favorites by dragging them to their desired positions. Remove sets by dragging them out of the list.
-                </p>
-            </div>
-        </dialog>
-        <dialog id="editorInstructions"><!-- editor help -->
-            <div onclick="event.stopPropagation()">
-                <button class="closeDialogPopup" onclick="this.parentElement.parentElement.style.display='none';"></button>
-                <p>
-                    Assign an SFX to a button by dragging it from your "Library" and dropping it into the desired button below.
-                    <br><br>
-                    To remove an SFX, drag it off the button.
-                </p>
-            </div>
-        </dialog>
-    </body>
+          </div>
+        </section>
+      </div>
+    </main>
+    <!--+++++++++++++-->
+    <!-- context menu -->
+    <!--+++++++++++++-->
+    <div id="setContextMenu" class="contextMenu">
+      <button class="contextMenuItem" onclick="onDeleteSetClick(event)">
+        <h2>Delete Set</h2>
+      </button>
+    </div>
+    <div id="audioContextMenu" class="contextMenu">
+      <button class="contextMenuItem" onclick="onDeleteLibraryItemClick(event)">
+        <h2>Delete Audio</h2>
+      </button>
+    </div>
+    <div id="favoriteContextMenu" class="contextMenu">
+      <button class="contextMenuItem" onclick="onDeleteFavoriteClick(event)">
+        <h2>Remove from Favorites</h2>
+      </button>
+    </div>
+    <div id="buttonContextMenu" class="contextMenu">
+      <button
+        class="contextMenuItem"
+        onclick="emptyButtonByDiv(elementJustRightClicked)"
+      >
+        <h2>Empty Button</h2>
+      </button>
+    </div>
+    <!--++++++++-->
+    <!-- modals -->
+    <!--++++++++-->
+    <img
+      id="notAllowedCursorImg"
+      src="img/not-allowed.svg"
+      style="display: none"
+    />
+    <dialog id="deleteAreYouSure">
+      <!-- about -->
+      <div onclick="event.stopPropagation()">
+        <button
+          class="closeDialogPopup"
+          onclick="this.parentElement.parentElement.style.display='none';"
+        ></button>
+        <p>
+          Are you sure you want to delete
+          <span id="deleteName">Thing Name</span>?
+        </p>
+        <div class="two-buttons">
+          <button
+            id="confirmDeleteButton"
+            class="contextMenuItem"
+            onclick="confirmDelete(event)"
+          >
+            <h2>Delete</h2>
+          </button>
+          <button
+            id="cancelDeleteButton"
+            class="contextMenuItem"
+            onclick="cancelDelete(event)"
+          >
+            <h2>Cancel</h2>
+          </button>
+        </div>
+      </div>
+    </dialog>
+    <dialog id="aboutInfoContainer">
+      <!-- about -->
+      <div onclick="event.stopPropagation()">
+        <button
+          class="closeDialogPopup"
+          onclick="this.parentElement.parentElement.style.display='none';"
+        ></button>
+        <p>SFX-6 Button Assignment Tool</p>
+        <p>A Practical Nonsense LLC Product</p>
+        <p>Version 1.0</p>
+        <p>
+          <a
+            href="#"
+            target="_blank"
+            onclick="NodeCB.openExternalLink('https://sfx-6.com/')"
+            >www.sfx-6.com</a
+          >
+        </p>
+        <p>
+          Designed by
+          <a
+            href="#"
+            target="_blank"
+            onclick="NodeCB.openExternalLink('https://sherwoodforlee.com/')"
+            >Sherwood Forlee</a
+          >
+        </p>
+        <p>
+          Development by
+          <a
+            href="#"
+            target="_blank"
+            onclick="NodeCB.openExternalLink('https://davedoublee.github.io/')"
+            >Dave Doublee</a
+          >
+        </p>
+        <p>
+          Development by
+          <a
+            href="#"
+            target="_blank"
+            onclick="NodeCB.openExternalLink('https://')"
+            >Khaled Mohamed</a
+          >
+        </p>
+      </div>
+    </dialog>
+    <dialog id="libraryInstructions">
+      <!-- library help -->
+      <div onclick="event.stopPropagation()">
+        <button
+          class="closeDialogPopup"
+          onclick="this.parentElement.parentElement.style.display='none';"
+        ></button>
+        <p>
+          To add new SFXs, click the "Upload" (<img
+            src="img/music--add.svg"
+            alt="&uarr;"
+          />) button. <br /><br />
+          To delete SFXs, right click on the SFX and then click "Delete".
+        </p>
+      </div>
+    </dialog>
+    <dialog id="setsInstructions">
+      <!-- sets help -->
+      <div onclick="event.stopPropagation()">
+        <button
+          class="closeDialogPopup"
+          onclick="this.parentElement.parentElement.style.display='none';"
+        ></button>
+        <p>
+          Sets are groups of up to 6 SFX.
+          <br /><br />
+          To create a set, click the "New Set" (<img
+            src="img/folder--add.svg"
+          />) button. <br /><br />
+          To edit a set, click on the set name; it will appear in the "Set
+          Editor".
+          <br /><br />
+          To delete a set, right click on the set and then click "Delete".
+          <br /><br />
+          Starred sets (<img src="img/star--filled.svg" />) are part of your
+          "Favorites".
+        </p>
+      </div>
+    </dialog>
+    <dialog id="favoritesInstructions">
+      <!-- favorites help -->
+      <div onclick="event.stopPropagation()">
+        <button
+          class="closeDialogPopup"
+          onclick="this.parentElement.parentElement.style.display='none';"
+        ></button>
+        <p>
+          Add up to 5 sets to your "Favorites" list by dragging them from "Saved
+          Sets" into this list.
+          <br /><br />
+          Each set in your "Favorites" list corresponds to a button on your
+          SFX-6. To activate a set, long press on the respective button for 2
+          seconds.
+          <br /><br />
+          Rearrange your favorites by dragging them to their desired positions.
+          Remove sets by dragging them out of the list.
+        </p>
+      </div>
+    </dialog>
+    <dialog id="editorInstructions">
+      <!-- editor help -->
+      <div onclick="event.stopPropagation()">
+        <button
+          class="closeDialogPopup"
+          onclick="this.parentElement.parentElement.style.display='none';"
+        ></button>
+        <p>
+          Assign an SFX to a button by dragging it from your "Library" and
+          dropping it into the desired button below.
+          <br /><br />
+          To remove an SFX, drag it off the button.
+        </p>
+      </div>
+    </dialog>
+  </body>
 </html>
