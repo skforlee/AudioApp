@@ -24,6 +24,12 @@ function onSetNameInputChange(evt) {
   // renameSet(input.value);
 }
 
+function onTypingSetName(evt) {
+  // styling: this function to retriger the css animation again and again
+  evt.target.classList.remove("inValidName");
+  evt.target.style.animation = null;
+}
+
 function onUploadSFXInputChange(evt) {
   const input = evt.target;
   if (input.value == "") return;
@@ -50,17 +56,28 @@ function getBigButonParent(eventTarget) {
   return eventTarget;
 }
 // Also, take note that there is another event listener on buttons that removes deviceButton--active when dragging the name!
+let pressTimer;
+let hold;
 function onBigButtonMouseDown(evt) {
   if (evt.buttons != 1) return; // Left click only
   const button = getBigButonParent(evt.target); // Click event might trigger on a child; we play the animation on the big button, not on the h2 or some other element
   console.log({ button });
   console.log("A");
   button.classList.add("deviceButton--active");
+
+  pressTimer = window.setTimeout(function () {
+    const button = getBigButonParent(evt.target);
+    const audioName = button.querySelector("h2").innerText;
+    if (audioName == "[Empty]") return;
+    stopAudio(audioName);
+    hold = true;
+  }, 1500);
 }
 function onBigButtonMouseUp(evt) {
   console.log("O");
   const button = getBigButonParent(evt.target);
   button.classList.remove("deviceButton--active");
+  clearTimeout(pressTimer);
 }
 function onBigButtonMouseOut(evt) {
   if (evt.target.classList.contains("deviceButton") == false) return; // Only allow on exiting the real big button
@@ -71,6 +88,10 @@ function onBigButtonClick(evt) {
   const audioName = button.querySelector("h2").innerText;
   if (audioName == "[Empty]") return;
   stopAudio(audioName);
+  if (hold) {
+    hold = false;
+    return;
+  }
   playAudioFromLibrary(audioName);
 }
 

@@ -16,7 +16,15 @@ const os = require("os");
 const LIBRARY_FOLDER_PATH = "library";
 const SAVED_SETS_FOLDER_PATH = "sets";
 const FAVORITES_FOLDER_PATH = "favorites";
-const shortCutExtension = ".desktop";
+var shortCutExtension;
+
+if (os.platform == "linux") {
+  shortCutExtension = ".desktop";
+} else if (os.platform == "win32") {
+  shortCutExtension = ".lnk";
+} else {
+  shortCutExtension = ".webloc";
+}
 
 // Library Audio
 function saveAudioFile({ file, folder, callback }) {
