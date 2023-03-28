@@ -65,6 +65,7 @@ function onBigButtonMouseDown(evt) {
   console.log("A");
   button.classList.add("deviceButton--active");
 
+  // when he hold press for 1500 ms the sound stops
   pressTimer = window.setTimeout(function () {
     const button = getBigButonParent(evt.target);
     const audioName = button.querySelector("h2").innerText;
