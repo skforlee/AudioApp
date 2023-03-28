@@ -32,7 +32,8 @@
   "dependencies": {
     "create-desktop-shortcuts": "^1.10.1",
     "electron-squirrel-startup": "^1.0.0",
-    "ini": "^4.0.0"
+    "ini": "^4.0.0",
+    "xml2js": "^0.4.23"
   },
   "devDependencies": {
     "@electron-forge/cli": "^6.0.5",

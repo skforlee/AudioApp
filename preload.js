@@ -11,6 +11,7 @@ const {
   playSound,
 } = require("./preload-js/preload-utils.js");
 const ini = require("ini");
+const xml2js = require("xml2js");
 const os = require("os");
 
 const LIBRARY_FOLDER_PATH = "library";
@@ -19,11 +20,14 @@ const FAVORITES_FOLDER_PATH = "favorites";
 var shortCutExtension;
 
 if (os.platform == "linux") {
+  // change shortcut extension to linux extension .desktop
   shortCutExtension = ".desktop";
-} else if (os.platform == "win32") {
-  shortCutExtension = ".lnk";
-} else {
+} else if (os.platform == "darwin") {
+  // change shortcut extension to macOS extension .webloc
   shortCutExtension = ".webloc";
+} else {
+  // change shortcut extension to Windows extension .lnk
+  shortCutExtension = ".lnk";
 }
 
 // Library Audio
@@ -326,6 +330,20 @@ function getShortcutTargetBasename(shortcutPath) {
     const desktopFile = fs.readFileSync(shortcutPath, "utf-8");
     const shortcutTarget = ini.parse(desktopFile)["Desktop Entry"].Exec;
     const fileName = basename(shortcutTarget);
+    return fileName;
+  } else if (os.platform == "darwin") {
+    const weblocFile = fs.readFileSync(shortcutPath, "utf8");
+
+    // Parse the XML using xml2js
+    let fileName;
+    xml2js.parseString(weblocFile, (error, result) => {
+      if (error) {
+        console.error(error);
+        return;
+      }
+      const url = result.plist.dict[0].string[0];
+      fileName = basename(url);
+    });
     return fileName;
   }
   const parsed = shell.readShortcutLink(shortcutPath);
