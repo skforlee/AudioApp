@@ -9,11 +9,17 @@
   },
   "build": {
     "directories": {
-      "output": "../build/audio-app"
+      "output": "../build2/audio-app"
     },
     "win": {
+      "target": "nsis",
       "asar": false,
-      "icon": "icon.ico"
+      "icon": "./music.png"
+    },
+    "linux": {
+      "target": "AppImage",
+      "icon": "./i.png",
+      "category": "Utility"
     }
   },
   "scripts": {
@@ -41,6 +47,7 @@
     "@electron-forge/maker-rpm": "^6.0.5",
     "@electron-forge/maker-squirrel": "^6.0.5",
     "@electron-forge/maker-zip": "^6.0.5",
-    "electron": "22.2.0"
+    "electron": "22.2.0",
+    "electron-builder": "^23.6.0"
   }
 }
