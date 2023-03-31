@@ -428,7 +428,7 @@ section {
     display: flex;
     justify-content: flex-start;
     align-items: center;
-    height: 32px;
+    height: 33px;
     padding: 0 42px 0 8px;
     border-bottom: 1px dotted;
 }
@@ -446,7 +446,7 @@ section {
     justify-content: center;
     align-items: center;
     flex-shrink: 0;
-    height: 100%;
+    height: 32px;
     width: 32px;
     background-image: url(../img/play--filled.svg);
     background-position: center;
@@ -466,9 +466,9 @@ section {
     flex-grow: 1;
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
+    align-items: center;
     position: relative;
-    height: calc(100% + 4px);
+    height: calc(100% + 3px);
     min-width: 0;
     background-color: white;
     border: 2px solid;
@@ -489,9 +489,9 @@ section {
     border-width: 2px 2px 0 2px;
 }
 .fileFolder h2 {
-    height: 32px;
+    height: 100%;
     width: 100%;
-    line-height: 32px;
+    line-height: 33px;
 }
 .dragArea {
     flex-shrink: 0;
@@ -519,7 +519,7 @@ section {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 32px;
+    height: 33px;
     border-bottom: 1px dotted;
 }
 .listIndex li:last-child {
@@ -543,6 +543,9 @@ section {
 .contextMenuItem:hover {
     background-color: red;
     color: white;
+}
+#cancelDeleteButton.contextMenuItem:hover {
+    background-color: black;
 }
 
 /*****************/
@@ -630,13 +633,9 @@ dialog img {
     flex-direction: row;
     justify-content: flex-start;
     align-items: center;
-    height: 32px;
     width: 100%;
     background-color: white;
     border-bottom: 1px dotted;
-}
-.libraryItem:last-child {
-    border-bottom: 0;
 }
 .libraryItem:hover {
     background-color: #e5e5e5;
@@ -732,10 +731,10 @@ dialog img {
     overflow-y: auto;
 }
 .savedSetsSet {
-    height: 32px;
+    height: 33px;
 }
 .savedSetsSet.shown {
-    height: calc((7 * 32px) + 2px);
+    height: calc((7 * 33px) + 2px);
 }
 .savedSetsSet .fileFolder {
     flex-direction: column;
@@ -759,7 +758,7 @@ dialog img {
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    height: 32px;
+    height: 33px;
     width: 100%;
 }
 .setTitle h2:hover {
@@ -812,7 +811,7 @@ dialog img {
     display: flex;
     flex-direction: row;
     align-items: center;
-    height: 32px;
+    height: 33px;
     width: 100%;
     padding-right: 4px;
     border-bottom: 1px dotted;
@@ -882,13 +881,14 @@ dialog img {
     flex-direction: column;
     min-width: 0;
     width: 100%;
+    margin-top: -1px;
     background-color: gray;
 }
 #favoritesListSets li {
     display: flex;
     flex-direction: row;
     position: relative;
-    height: 32px;
+    height: 33px;
     min-width: 0;
     width: 100%;
 }
@@ -1177,11 +1177,14 @@ dialog img {
 .visible {
     display: block !important;
 }
+#deleteAreYouSure p {
+    margin-bottom: 20px;
+}
 .two-buttons {
     width: 100%;
     display: flex;
     justify-content: center;
-    gap: 40px;
+    gap: 20px;
 }
 #notAllowedCursorImg {
     position: absolute;
