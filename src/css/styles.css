@@ -1091,7 +1091,7 @@ dialog img {
     display: flex;
     align-items: center;
     position: relative;
-    height: 32px;
+    min-height: 32px;
     min-width: 0;
     padding-left: 8px;
     background-color: white;
@@ -1104,6 +1104,11 @@ dialog img {
 }
 .buttonInfo:active {
     cursor: grabbing;
+}
+.buttonInfo h2 {
+    padding: 8px 0;
+    line-height: 1.25;
+    white-space: normal;
 }
 .deleteSfx {
     position: absolute;
