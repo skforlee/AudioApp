@@ -57,11 +57,11 @@
           <li id="help" class="menuBarItem">
             <h2 onclick="toggleHelpMenu(event)">Help</h2>
             <ul id="menuBarHelpDropdown" class="menuItemContent">
-              <!-- <li id="instructionsOption" class="menuBarDropdown"><a href="https://sfx-6.com/instructions/" target="_blank">How to use</a></li> -->
+              <!-- <li id="instructionsOption" class="menuBarDropdown"><a href="https://sfxer.com/instructions/" target="_blank">How to use</a></li> -->
               <li id="instructionsOption" class="menuBarDropdown">
                 <a
                   href="#"
-                  onclick="NodeCB.openExternalLink('https://sfx-6.com/instructions/')"
+                  onclick="NodeCB.openExternalLink('https://sfxer.com/instructions/')"
                   >How to use</a
                 >
               </li>
@@ -77,7 +77,7 @@
       </nav>
 
       <!-- title -->
-      <div id="softwareTitle"><h1>SFX-6 Button Assignment Tool</h1></div>
+      <div id="softwareTitle"><h1>SFXer Button Assignment Tool</h1></div>
 
       <!-- volume control -->
       <div id="volume-control-container">
@@ -490,8 +490,8 @@
         <p>A Practical Nonsense LLC Product</p>
         <p>Version 1.0</p>
         <p>
-          <a href="#" onclick="NodeCB.openExternalLink('https://sfx-6.com/')"
-            >www.sfx-6.com</a
+          <a href="#" onclick="NodeCB.openExternalLink('https://sfxer.com/')"
+            >www.sfxer.com</a
           >
         </p>
         <p>
@@ -532,7 +532,7 @@
             src="img/music--add.svg"
             alt="&uarr;"
           />) button. <br /><br />
-          To delete SFXs, right click on the SFX and then click "Delete".
+          To delete SFXs, right click on the SFX and then click "Delete Audio".
         </p>
       </div>
     </dialog>
@@ -549,13 +549,11 @@
           To create a set, click the "New Set" (<img
             src="img/folder--add.svg"
           />) button. <br /><br />
-          To edit a set, click on the set name; it will appear in the "Set
-          Editor".
+          To edit a set, click on the set name; it will appear in the "Set Editor".
           <br /><br />
-          To delete a set, right click on the set and then click "Delete".
+          To delete a set, right click on the set and then click "Delete Set".
           <br /><br />
-          Starred sets (<img src="img/star--filled.svg" />) are part of your
-          "Favorites".
+          Starred sets (<img src="img/star--filled.svg" />) are part of your "Favorites".
         </p>
       </div>
     </dialog>
@@ -567,15 +565,11 @@
           onclick="this.parentElement.parentElement.style.display='none';"
         ></button>
         <p>
-          Add up to 5 sets to your "Favorites" list by dragging them from "Saved
-          Sets" into this list.
+          Add up to 5 sets to your "Favorites" list by dragging them from "Saved Sets" into this list.
           <br /><br />
-          Each set in your "Favorites" list corresponds to a button on your
-          SFX-6. To activate a set, long press on the respective button for 2
-          seconds.
+          Each set in your "Favorites" list corresponds to a button on your SFXer. To activate a set on your SFXer, press and hold button 6, then press on another button corresponding to the set you want to switch to.
           <br /><br />
-          Rearrange your favorites by dragging them to their desired positions.
-          Remove sets by dragging them out of the list.
+          Rearrange your favorites by dragging them to their desired positions. Remove sets within your "Favorites" list by right clicking on the set you wish to remove then clicking "Remove from Favorites".
         </p>
       </div>
     </dialog>
@@ -587,10 +581,12 @@
           onclick="this.parentElement.parentElement.style.display='none';"
         ></button>
         <p>
-          Assign an SFX to a button by dragging it from your "Library" and
-          dropping it into the desired button below.
+          Assign an SFX to a button by dragging it from your "Library" and dropping it into the desired button.
           <br /><br />
-          To remove an SFX, drag it off the button.
+          To rearrange SFX, drag them to the desired position.<br><br>
+          To play an SFX, click the button.<br><br>
+          To stop playing an SFX, click and hold the button for 1.5 seconds.<br><br>
+          To remove an SFX, right click on the button and click "Empty Button".
         </p>
       </div>
     </dialog>
