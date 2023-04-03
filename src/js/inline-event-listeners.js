@@ -127,7 +127,7 @@ function onSetsSearchChange(newValue) {
       li.classList.add("hidden");
     }
     // Show only what's necessary
-    if (h2.innerText.includes(newValue)) {
+    if (h2.innerText.toLowerCase().includes(newValue.toLowerCase())) {
       li.classList.remove("hidden");
     }
   }
@@ -155,7 +155,7 @@ function onLibrarySearchChange(newValue) {
       li.classList.add("hidden");
     }
     // Show only what's necessary
-    if (input.value.includes(newValue)) {
+    if (input.value.toLowerCase().includes(newValue.toLowerCase())) {
       li.classList.remove("hidden");
     }
   }
