@@ -1,10 +1,10 @@
-# How to work on SFX-6:
+# How to work on SFXer:
 
-This document describes everything necessary to continue work and development of SFX-6.
+This document describes everything necessary to continue work and development of SFXer.
 
 ## Technologies Used
 
-SFX-6 is just a web app (website) exported to desktop using Electron.
+SFXer is just a web app (website) exported to desktop using Electron.
 
 ## Setup
 
