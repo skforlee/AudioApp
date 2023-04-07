@@ -62,7 +62,6 @@ function onBigButtonMouseDown(evt) {
   if (evt.buttons != 1) return; // Left click only
   const button = getBigButonParent(evt.target); // Click event might trigger on a child; we play the animation on the big button, not on the h2 or some other element
   console.log({ button });
-  console.log("A");
   button.classList.add("deviceButton--active");
 
   // when he hold press for 1500 ms the sound stops
@@ -70,7 +69,7 @@ function onBigButtonMouseDown(evt) {
     const button = getBigButonParent(evt.target);
     const audioName = button.querySelector("h2").innerText;
     if (audioName == "[Empty]") return;
-    stopAudio(audioName);
+    stopAudio(audioName, button.id);
     hold = true;
   }, 1500);
 }
@@ -88,12 +87,14 @@ function onBigButtonClick(evt) {
   const button = getBigButonParent(evt.target);
   const audioName = button.querySelector("h2").innerText;
   if (audioName == "[Empty]") return;
-  stopAudio(audioName);
+  console.log(button.id);
+  stopAudio(audioName, button.id);
   if (hold) {
     hold = false;
     return;
   }
-  playAudioFromLibrary(audioName);
+
+  playAudioFromLibrary(audioName, null, button.id);
 }
 
 function onNewSetClick(evt) {

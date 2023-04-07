@@ -1,6 +1,10 @@
 /* Note: the readonly attribute is there to prevent some strange drag-drop behavior */
 /* The input should only be write-able if focused */
 
+/*
+ * i recreated the makeSetActive function (it exist in the app-scpecific-utils.js) here as this file
+ * executes first before that before even loads
+ */
 function makeSetActive(setName) {
   // Make it look pink
   const savedSetsLis = queryAll("#setsList .savedSetsSet");
@@ -138,6 +142,9 @@ function createSavedSetDom({ name, items, isFavorited, isActive, libAudios }) {
 
   // added the || condition to check if the audio exist in the library in the first place
   items = items.map((item) => {
+    /* this if condition checks if the item deleted by hand from the library folder
+     *  and the shortcuts still exist, if so the it deletes the shortcuts
+     */
     if (item != null && !libAudios.includes(item)) {
       let name = item;
       for (const savedSetData of NodeCB.getAllSavedSetsWithAudiosData()) {
