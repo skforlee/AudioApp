@@ -1,5 +1,35 @@
 /* Note: the readonly attribute is there to prevent some strange drag-drop behavior */
 /* The input should only be write-able if focused */
+
+function makeSetActive(setName) {
+  // Make it look pink
+  const savedSetsLis = queryAll("#setsList .savedSetsSet");
+  const favoriteSetsLis = queryAll("#favoritesListSets li");
+  for (const li of savedSetsLis) li.classList.remove("active");
+  for (const li of favoriteSetsLis) li.classList.remove("active");
+
+  const savedSetLi = savedSetsLis.filter(
+    (li) => li.querySelector(".setTitle h2").innerText == setName
+  )[0];
+  savedSetLi.classList.add("active");
+
+  // Update buttons
+  const audioNames = NodeCB.getSavedSetAudioNames(setName);
+  console.log({ audioNames });
+
+  for (let i = 0; i <= 5; i++) {
+    const thisButton = query(`#button${i + 1}`);
+    if (audioNames[i] != null) {
+      updateButton(thisButton, audioNames[i]);
+    } else {
+      updateButton(thisButton, "[Empty]");
+    }
+  }
+
+  // Update name in the big panel
+  query("#setNameInput").value = setName;
+}
+
 function createLibraryItemDom({ name }) {
   const element = dom(
     `
@@ -95,7 +125,7 @@ function createLibraryItemDom({ name }) {
   updateLibraryAndSavedSetsTitleNumber();
   return element;
 }
-function createSavedSetDom({ name, items, isFavorited, isActive }) {
+function createSavedSetDom({ name, items, isFavorited, isActive, libAudios }) {
   if (name == null) throw `You must provide a name to createSavedSetDom`;
 
   let elementExtraClasses = "";
@@ -105,7 +135,34 @@ function createSavedSetDom({ name, items, isFavorited, isActive }) {
   if (items == null) {
     items = repeatToArray("[Empty]", 6);
   }
-  items = items.map((item) => (item == null ? "[Empty]" : item));
+
+  // added the || condition to check if the audio exist in the library in the first place
+  items = items.map((item) => {
+    if (item != null && !libAudios.includes(item)) {
+      let name = item;
+      for (const savedSetData of NodeCB.getAllSavedSetsWithAudiosData()) {
+        // For each set...
+        const audioNames = savedSetData.audioNames;
+        for (let i = 0; i < audioNames.length; i++) {
+          // For each audio name in that set...
+          const audioName = audioNames[i];
+          if (audioName == name) {
+            NodeCB.deleteAudioShortcutByIndexInSetFolder(
+              savedSetData.setName,
+              i
+            );
+          }
+        }
+      }
+
+      // Update numbers - e.g "Library <17>"
+      updateLibraryAndSavedSetsTitleNumber();
+
+      // Remove from buttons in DOM
+      makeSetActive(getCurrentlyActiveSetName());
+    }
+    return item != null && libAudios.includes(item) ? item : "[Empty]";
+  });
 
   const element = dom(
     `

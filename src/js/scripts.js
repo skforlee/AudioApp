@@ -11,11 +11,15 @@ function loadLibraryAudios() {
 function loadSavedSets() {
   removeAllChildren(query("#setsList"));
   const allSavedSetsData = NodeCB.getAllSavedSetsWithAudiosData();
+  const allAudioNames = NodeCB.getAllLibraryAudioNames();
+  console.log(allSavedSetsData);
+  console.log(allAudioNames);
   for (const setData of allSavedSetsData) {
     createSavedSetDom({
       name: setData.setName,
       items: setData.audioNames,
       isFavorited: NodeCB.isSetFavorite(setData.setName),
+      libAudios: allAudioNames,
     });
   }
 }
