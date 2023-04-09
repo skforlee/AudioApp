@@ -6,6 +6,7 @@ const {
   shell,
 } = require("electron");
 const path = require("path");
+const gotTheLock = app.requestSingleInstanceLock();
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require("electron-squirrel-startup")) {
@@ -46,7 +47,16 @@ ipcMain.handle("open-dev-console", async (event, _) => {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.on("ready", createWindow);
+// app.on("ready", createWindow);
+
+// Request a single instance lock for the app
+if (!gotTheLock) {
+  // If another instance of the app is already running, quit this instance
+  app.quit();
+} else {
+  // If this is the first instance of the app, create the main window
+  app.on("ready", createWindow);
+}
 
 // Quit when all windows are closed, except on macOS. There, it's common
 // for applications and their menu bar to stay active until the user quits
@@ -65,6 +75,17 @@ app.whenReady().then(() => {
       createWindow();
     }
   });
+});
+
+/* Allow only one instance of the app to be opened
+ * this function listens to the second instance to close it and re-open the first instance instead
+ */
+app.on("second-instance", function (event, commandLine, workingDirectory) {
+  // If the app is already running, focus the existing instance
+  if (mainWindow) {
+    if (mainWindow.isMinimized()) mainWindow.restore();
+    mainWindow.focus();
+  }
 });
 
 // In this file you can include the rest of your app's specific main process

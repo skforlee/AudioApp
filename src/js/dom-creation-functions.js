@@ -15,10 +15,10 @@ function makeSetActive(setName) {
   const savedSetLi = savedSetsLis.filter(
     (li) => li.querySelector(".setTitle h2").innerText == setName
   )[0];
-  savedSetLi.classList.add("active");
+  savedSetLi?.classList.add("active");
 
   // Update buttons
-  const audioNames = NodeCB.getSavedSetAudioNames(setName);
+  const audioNames = NodeCB.getSavedSetAudioNames(setName || "");
   console.log({ audioNames });
 
   for (let i = 0; i <= 5; i++) {
@@ -129,7 +129,13 @@ function createLibraryItemDom({ name }) {
   updateLibraryAndSavedSetsTitleNumber();
   return element;
 }
-function createSavedSetDom({ name, items, isFavorited, isActive, libAudios }) {
+function createSavedSetDom({
+  name,
+  items,
+  isFavorited,
+  isActive,
+  libAudios = [],
+}) {
   if (name == null) throw `You must provide a name to createSavedSetDom`;
 
   let elementExtraClasses = "";
@@ -145,6 +151,9 @@ function createSavedSetDom({ name, items, isFavorited, isActive, libAudios }) {
     /* this if condition checks if the item deleted by hand from the library folder
      *  and the shortcuts still exist, if so the it deletes the shortcuts
      */
+    if (!libAudios) {
+      var libAudios = [];
+    }
     if (item != null && !libAudios.includes(item)) {
       let name = item;
       for (const savedSetData of NodeCB.getAllSavedSetsWithAudiosData()) {

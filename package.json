@@ -9,7 +9,7 @@
   },
   "build": {
     "directories": {
-      "output": "../build4/audio-app"
+      "output": "../build6/audio-app"
     },
     "files": [
       "!Apps/**/*"

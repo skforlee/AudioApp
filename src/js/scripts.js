@@ -173,3 +173,85 @@ document.addEventListener("DOMContentLoaded", () => {
 
   makeSetActive(getAnySetName());
 });
+var pressTimer1;
+var hold1;
+document.addEventListener("keydown", (evt) => {
+  console.log(evt.code);
+  let btn;
+  // Check which key was pressed
+  switch (evt.code) {
+    case "Numpad1":
+      btn = queryAll("#button1")[0];
+      keyDown(btn);
+      break;
+    case "Numpad2":
+      btn = queryAll("#button2")[0];
+      keyDown(btn);
+      break;
+    case "Numpad3":
+      btn = queryAll("#button3")[0];
+      keyDown(btn);
+      break;
+    case "Numpad4":
+      btn = queryAll("#button4")[0];
+      keyDown(btn);
+      break;
+    case "Numpad5":
+      btn = queryAll("#button5")[0];
+      keyDown(btn);
+      break;
+    case "Numpad6":
+      btn = queryAll("#button6")[0];
+      keyDown(btn);
+      break;
+  }
+});
+
+document.addEventListener("keyup", (evt) => {
+  console.log(evt.code);
+  let btn;
+  switch (evt.code) {
+    case "Numpad1":
+      btn = queryAll("#button1")[0];
+      keyUp(btn);
+      break;
+    case "Numpad2":
+      btn = queryAll("#button2")[0];
+      keyUp(btn);
+      break;
+    case "Numpad3":
+      btn = queryAll("#button3")[0];
+      keyUp(btn);
+      break;
+    case "Numpad4":
+      btn = queryAll("#button4")[0];
+      keyUp(btn);
+      break;
+    case "Numpad5":
+      btn = queryAll("#button5")[0];
+      keyUp(btn);
+      break;
+    case "Numpad6":
+      btn = queryAll("#button6")[0];
+      keyUp(btn);
+      break;
+  }
+});
+
+function keyUp(btn) {
+  btn.classList.remove("deviceButton--active");
+  clearTimeout(pressTimer1);
+}
+
+function keyDown(btn) {
+  btn.click();
+  btn.classList.add("deviceButton--active");
+
+  // when he hold press for 1500 ms the sound stops
+  pressTimer1 = window.setTimeout(function () {
+    const audioName = btn.querySelector("h2").innerText;
+    if (audioName == "[Empty]") return;
+    stopAudio(audioName, btn.id);
+    hold1 = true;
+  }, 1500);
+}
