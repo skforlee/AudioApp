@@ -9,7 +9,7 @@
   },
   "build": {
     "directories": {
-      "output": "../build6/audio-app"
+      "output": "../build7/audio-app"
     },
     "files": [
       "!Apps/**/*"
@@ -19,7 +19,7 @@
       "allowToChangeInstallationDirectory": "true"
     },
     "win": {
-      "target": "nsis",
+      "target": "portable",
       "asar": false,
       "icon": "./music3.png",
       "asarUnpack": "**/*.vbs"
