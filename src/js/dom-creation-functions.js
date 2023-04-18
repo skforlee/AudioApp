@@ -134,7 +134,7 @@ function createSavedSetDom({
   items,
   isFavorited,
   isActive,
-  libAudios = [],
+  libAudios,
 }) {
   if (name == null) throw `You must provide a name to createSavedSetDom`;
 
@@ -146,15 +146,16 @@ function createSavedSetDom({
     items = repeatToArray("[Empty]", 6);
   }
 
+  
+  var audios = libAudios || [];
+
   // added the || condition to check if the audio exist in the library in the first place
   items = items.map((item) => {
     /* this if condition checks if the item deleted by hand from the library folder
      *  and the shortcuts still exist, if so the it deletes the shortcuts
      */
-    if (!libAudios) {
-      var libAudios = [];
-    }
-    if (item != null && !libAudios.includes(item)) {
+    
+    if (item != null && !audios.includes(item)) {
       let name = item;
       for (const savedSetData of NodeCB.getAllSavedSetsWithAudiosData()) {
         // For each set...
@@ -177,7 +178,7 @@ function createSavedSetDom({
       // Remove from buttons in DOM
       makeSetActive(getCurrentlyActiveSetName());
     }
-    return item != null && libAudios.includes(item) ? item : "[Empty]";
+    return item != null && audios.includes(item) ? item : "[Empty]";
   });
 
   const element = dom(

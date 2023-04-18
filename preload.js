@@ -18,6 +18,12 @@ const LIBRARY_FOLDER_PATH = "library";
 const SAVED_SETS_FOLDER_PATH = "sets";
 const FAVORITES_FOLDER_PATH = "favorites";
 var shortCutExtension;
+var ExecDir = process.env.PORTABLE_EXECUTABLE_DIR || "";
+
+if (ExecDir){
+  process.chdir(ExecDir);
+}
+
 
 if (os.platform == "linux") {
   // change shortcut extension to linux extension .desktop
@@ -77,7 +83,11 @@ function deleteLibraryAudioFile(audioName) {
   fs.rmSync(join(LIBRARY_FOLDER_PATH, audioName), { force: true });
 }
 function getLibraryAudioPath(audioName) {
-  return resolve(join(LIBRARY_FOLDER_PATH, audioName));
+  if (ExecDir){
+    return join(join(ExecDir, LIBRARY_FOLDER_PATH), audioName);
+  }else{
+    return resolve(join(LIBRARY_FOLDER_PATH, audioName));
+  }
 }
 function getAllLibraryAudioNames() {
   const allAudios = Array.from(fs.readdirSync(LIBRARY_FOLDER_PATH));
@@ -315,14 +325,27 @@ function updateSavedSetAudioShortcuts(setName, newAudioNames) {
 
 // Utils
 function initFolders() {
-  if (fs.existsSync("sets") == false) {
-    fs.mkdirSync("sets");
-  }
-  if (fs.existsSync("library") == false) {
-    fs.mkdirSync("library");
-  }
-  if (fs.existsSync("favorites") == false) {
-    fs.mkdirSync("favorites");
+  if(ExecDir){
+
+    if (fs.existsSync(join(ExecDir, "sets")) == false) {
+      fs.mkdirSync(join(ExecDir, "sets"));
+    }
+    if (fs.existsSync(join(ExecDir,"library")) == false) {
+      fs.mkdirSync(join(ExecDir,"library"));
+    }
+    if (fs.existsSync(join(ExecDir,"favorites")) == false) {
+      fs.mkdirSync(join(ExecDir,"favorites"));
+    }
+  }else{
+    if (fs.existsSync("sets") == false) {
+      fs.mkdirSync("sets");
+    }
+    if (fs.existsSync("library") == false) {
+      fs.mkdirSync(join(ExecDir,"library"));
+    }
+    if (fs.existsSync(join(ExecDir,"favorites")) == false) {
+      fs.mkdirSync(join(ExecDir,"favorites"));
+    }
   }
 }
 function getShortcutTargetBasename(shortcutPath) {
