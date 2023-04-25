@@ -18,10 +18,12 @@ const LIBRARY_FOLDER_PATH = "library";
 const SAVED_SETS_FOLDER_PATH = "sets";
 const FAVORITES_FOLDER_PATH = "favorites";
 var shortCutExtension;
-var ExecDir = process.env.PORTABLE_EXECUTABLE_DIR || "";
+var ExecDir = process.env.PORTABLE_EXECUTABLE_DIR || ""; // here you get the portable executable directory for the windows
 
 if (ExecDir){
-  process.chdir(ExecDir);
+  // here you switch the absolute directory of the app to be the portable executable file path after extracting the files
+  // on the temp directory on windows
+  process.chdir(ExecDir); 
 }
 
 
@@ -29,7 +31,7 @@ if (os.platform == "linux") {
   // change shortcut extension to linux extension .desktop
   shortCutExtension = ".desktop";
 } else if (os.platform == "darwin") {
-  // change shortcut extension to macOS extension .webloc
+  // change shortcut extension to none as shortcuts on mac doesn't have an extension
   shortCutExtension = "";
 } else {
   // change shortcut extension to Windows extension .lnk
@@ -325,6 +327,8 @@ function updateSavedSetAudioShortcuts(setName, newAudioNames) {
 
 // Utils
 function initFolders() {
+  // it looks weird but it's the only formate that works. any shorter fomate would result in creating 
+  // the folders in the temproray directory instead of the Executable file directory
   if(ExecDir){
 
     if (fs.existsSync(join(ExecDir, "sets")) == false) {
@@ -355,6 +359,10 @@ function getShortcutTargetBasename(shortcutPath) {
     const fileName = basename(shortcutTarget);
     return fileName;
   } else if (os.platform == "darwin") {
+    
+    // here it only reads a normal symlink using the native function within fs library to read symlink
+    // don't think of using readFile the decryption is corrupted
+
     let absPath = fs.readlinkSync(shortcutPath);
     const fileName = basename(absPath)
 
@@ -387,10 +395,10 @@ function getSavedSetAudioNames(setName) {
   const allFilesInside = [];
   for (let i = 0; i <= 5; i++) {
     const shortcutName = i + shortCutExtension;
-    console.log(shortcutName);
+    // console.log(shortcutName);
     const shortcutPath = join(setPath, shortcutName);
-    console.log(shortcutPath);
-    console.log(fs.existsSync(shortcutPath));
+    // console.log(shortcutPath);
+    // console.log(fs.existsSync(shortcutPath));
     if (fs.existsSync(shortcutPath)) {
       allFilesInside.push(
         getOriginalAudioShortcutNameFromSavedSet(setName, shortcutName)
