@@ -30,7 +30,7 @@ if (os.platform == "linux") {
   shortCutExtension = ".desktop";
 } else if (os.platform == "darwin") {
   // change shortcut extension to macOS extension .webloc
-  shortCutExtension = ".webloc";
+  shortCutExtension = "";
 } else {
   // change shortcut extension to Windows extension .lnk
   shortCutExtension = ".lnk";
@@ -355,18 +355,9 @@ function getShortcutTargetBasename(shortcutPath) {
     const fileName = basename(shortcutTarget);
     return fileName;
   } else if (os.platform == "darwin") {
-    const weblocFile = fs.readFileSync(shortcutPath, "utf8");
+    let absPath = fs.readlinkSync(shortcutPath);
+    const fileName = basename(absPath)
 
-    // Parse the XML using xml2js
-    let fileName;
-    xml2js.parseString(weblocFile, (error, result) => {
-      if (error) {
-        console.error(error);
-        return;
-      }
-      const url = result.plist.dict[0].string[0];
-      fileName = basename(url);
-    });
     return fileName;
   }
   const parsed = shell.readShortcutLink(shortcutPath);
@@ -381,10 +372,25 @@ function getOriginalAudioShortcutNameFromSavedSet(setName, shortcutName) {
 function getSavedSetAudioNames(setName) {
   const setPath = join(SAVED_SETS_FOLDER_PATH, setName);
 
+  fs.readdir(setPath, (err, files) => {
+    if (err) {
+      console.error(`Error reading directory: ${err}`);
+      return;
+    }
+  
+    console.log(`Files in ${setPath}:`);
+    files.forEach((file) => {
+      console.log(file);
+    });
+  });
+
   const allFilesInside = [];
   for (let i = 0; i <= 5; i++) {
     const shortcutName = i + shortCutExtension;
+    console.log(shortcutName);
     const shortcutPath = join(setPath, shortcutName);
+    console.log(shortcutPath);
+    console.log(fs.existsSync(shortcutPath));
     if (fs.existsSync(shortcutPath)) {
       allFilesInside.push(
         getOriginalAudioShortcutNameFromSavedSet(setName, shortcutName)

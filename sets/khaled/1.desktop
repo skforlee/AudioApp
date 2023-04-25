@@ -3,5 +3,5 @@
 Version=1.0
 Type=Application
 Terminal=false
-Exec="/home/khaled/Laptop/Work/Sound_sherwood/SFX-6/AudioApp/library/sword magic hit.wav"
+Exec="/home/twibster/Laptop/work/AudioApp/library/sword magic hit.wav"
 Name=1

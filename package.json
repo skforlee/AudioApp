@@ -50,12 +50,45 @@
     "xml2js": "^0.4.23"
   },
   "devDependencies": {
-    "@electron-forge/cli": "^6.0.5",
+    "@electron-forge/cli": "^6.1.1",
     "@electron-forge/maker-deb": "^6.0.5",
     "@electron-forge/maker-rpm": "^6.0.5",
     "@electron-forge/maker-squirrel": "^6.0.5",
     "@electron-forge/maker-zip": "^6.0.5",
-    "electron": "22.2.0",
-    "electron-builder": "^23.6.0"
+    "electron": "22.2.0"
+  },
+  "config": {
+    "forge": {
+      "makers": [
+        {
+          "name": "@electron-forge/maker-squirrel",
+          "config": {
+            "name": "audio_app"
+          }
+        },
+        {
+          "name": "@electron-forge/maker-zip",
+          "platforms": [
+            "darwin"
+          ]
+        },
+        {
+          "name": "@electron-forge/maker-deb",
+          "config": {}
+        },
+        {
+          "name": "@electron-forge/maker-rpm",
+          "config": {}
+        }
+      ],
+      "publishers": [],
+      "platforms": ["darwin"],
+      "packagerConfig": {
+        "icon": "./music3.png",
+        "ignore": [
+          "\\/Apps($|\\/)"
+        ]
+      }
+    }
   }
 }
