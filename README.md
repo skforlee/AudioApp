@@ -76,13 +76,22 @@ If your issue is related to something else (e.g. the 6 big buttons), see `index.
 
 ## Testing and Packaging for Mac
 
-you just need a mac machine to be able to run the packaging command (due dmg-license stuff):
+just install electron-forge and add the packaging configurations in the json file then execute this command
 
 ```bash
-npx electron-builder --mac
+sudo electron-forge make --platform darwin
 ```
 
-**Note:** make sure that you've lready installed electron-builder as a dev tool by running this command
+## Packaging for Windows and Linux
+
+install electron-builder and execute this command
+
+```bash
+sudo electron-builder build --win --linux
+```
+this will create an AppImage file for linux and .exe portable file for windows
+
+**Note:** make sure that you've already installed electron-builder as a dev tool by running this command
 
 ```bash
 npm install electron-builder --save-dev
