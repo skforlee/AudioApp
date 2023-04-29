@@ -90,6 +90,9 @@ h1, h2, p {
     white-space: nowrap;
 }
 h1 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     text-align: center;
     user-select: none;
 }
@@ -255,11 +258,12 @@ input[type=range]::-moz-range-thumb {
     background-color: #e5e5e5;
 }
 .menuBarDropdown > h2, .menuBarDropdown > a {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
     height: 100%;
     width: 100%;
-    padding: 4px 30px 4px 10px;
-    display: block;
-    line-height: calc(32px - 2px);
+    padding: 0 12px;
 }
 #instructionsOption {
     padding: 0;
@@ -491,7 +495,10 @@ section {
 .fileFolder h2 {
     height: 100%;
     width: 100%;
-    line-height: 33px;
+    /*line-height: 33px;*/
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
 }
 .dragArea {
     flex-shrink: 0;
