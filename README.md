@@ -88,21 +88,21 @@ npm install electron-builder --save-dev
 
 2. execute this command to build for windows and linux
 ```bash
-sudo electron-builder build --win --linux
+electron-builder build --win --linux
 ```
 
 this will create an AppImage file for linux and .exe portable file for windows
 
 **Note:** to generate a dmg app for mac you can execute this command **you need to have access to a macOS machine to execute this command**
 ```bash
-sudo electron-builder build --mac
+electron-builder build --mac
 ```
 
 ### Alternative way to package for mac without a macOS machine
 
 just install electron-forge and execute this command
 ```bash
-sudo electron-forge make --platform darwin
+electron-forge make --platform darwin
 ```
 it generates an executable zip file that runs on mac
 
