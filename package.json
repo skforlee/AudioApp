@@ -9,7 +9,7 @@
   },
   "build": {
     "directories": {
-      "output": "../build7/audio-app"
+      "output": "../build/audio-app"
     },
     "files": [
       "!Apps/**/*"
@@ -21,13 +21,16 @@
     "win": {
       "target": "portable",
       "asar": false,
-      "icon": "./music3.png",
+      "icon": "./src/icon/icon.png",
       "asarUnpack": "**/*.vbs"
     },
     "linux": {
       "target": "AppImage",
-      "icon": "./music3.png",
+      "icon": "./src/icon/icon.png",
       "category": "Utility"
+    },
+    "mac": {
+      "icon": "./src/icon/icon.png"
     }
   },
   "scripts": {
@@ -39,8 +42,7 @@
   },
   "keywords": [],
   "author": {
-    "name": "daverave1212",
-    "email": "crazyman_dave2000@yahoo.com"
+    "name": "daverave1212 && KhaledFahmy"
   },
   "license": "MIT",
   "dependencies": {
@@ -84,7 +86,7 @@
       "publishers": [],
       "platforms": ["darwin"],
       "packagerConfig": {
-        "icon": "./music3.png",
+        "icon": "./src/icon/icon.png",
         "ignore": [
           "\\/Apps($|\\/)"
         ]
