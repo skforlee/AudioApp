@@ -23,7 +23,8 @@ const createWindow = () => {
       preload: path.join(__dirname, "preload.js"),
       nodeIntegration: true,
       enableRemoteModule: true,
-      icon: path.join(__dirname, "src", "icon.ico"),
+      icon: path.join(__dirname, "src/icon", "icon.ico"),
+      devTools: false,
     },
   });
 
@@ -33,7 +34,7 @@ const createWindow = () => {
   mainWindow.loadFile(path.join(__dirname, "src", "index.html"));
 
   // Open the DevTools.
-  mainWindow.webContents.openDevTools();
+  // mainWindow.webContents.openDevTools();
 };
 
 // IMPORTANT: This should be done BEFORE doing any app.something(...)

@@ -35,6 +35,11 @@ To start working on the project, follow these steps:
 
 To build the app for windows: - Run this command: `npx electron-builder build` - If this doesn't work, go back one folder (the parent folder of the folder you're in) and create a new folder called "build", then try again. - The final app will be in the "build" folder in the parent folder of the folder of the app - `C:\projects` - `AudioApp` - `build`
 
+
+## Change Icon
+
+just replace the icon.png image in the dir: `src/icon` (it must be named `icon.png`) then repackage 
+
 # App Structure Explained
 
 There are 3 main types of elements in the app:
@@ -74,28 +79,32 @@ If your issue is related to something else (e.g. the 6 big buttons), see `index.
 
 # Future Features
 
-## Testing and Packaging for Mac
+## Packaging for Windows, Linux, and mac 
 
-just install electron-forge and add the packaging configurations in the json file then execute this command
-
-```bash
-sudo electron-forge make --platform darwin
-```
-
-## Packaging for Windows and Linux
-
-install electron-builder and execute this command
-
-```bash
-sudo electron-builder build --win --linux
-```
-this will create an AppImage file for linux and .exe portable file for windows
-
-**Note:** make sure that you've already installed electron-builder as a dev tool by running this command
-
+1. first install electron-builder
 ```bash
 npm install electron-builder --save-dev
 ```
+
+2. execute this command to build for windows and linux
+```bash
+electron-builder build --win --linux
+```
+
+this will create an AppImage file for linux and .exe portable file for windows
+
+**Note:** to generate a dmg app for mac you can execute this command **you need to have access to a macOS machine to execute this command**
+```bash
+electron-builder build --mac
+```
+
+### Alternative way to package for mac without a macOS machine
+
+just install electron-forge and execute this command
+```bash
+electron-forge make --platform darwin
+```
+it generates an executable zip file that runs on mac
 
 ## Optimizing App's Speed
 
